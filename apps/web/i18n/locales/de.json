@@ -22,6 +22,23 @@
     "review": "Ungeprüfte Transaktionen",
     "reviewCount": "Keine offenen Transaktionen | Eine offene Transaktion | {count} offene Transaktionen",
     "reviewLink": "Alle anzeigen",
+    "cashflow": "Einnahmen & Ausgaben",
+    "budgets": "Budgets",
+    "customize": "Anpassen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "moveUp": "Nach oben",
+    "moveDown": "Nach unten",
+    "widgets": {
+      "networth": "Gesamtvermögen",
+      "allocation": "Aufteilung",
+      "kpis": "Kennzahlen",
+      "holdings": "Positionen",
+      "accounts": "Portfolios & Konten",
+      "review": "Ungeprüfte Transaktionen",
+      "cashflow": "Einnahmen & Ausgaben",
+      "budgets": "Budgets"
+    },
     "metrics": {
       "invested": "Investiertes Kapital",
       "priceGain": "Kursgewinn",

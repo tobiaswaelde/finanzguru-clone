@@ -88,7 +88,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [x] T033 [US1] Build `apps/web/app/components/dashboard/NetWorthChart.vue` with Unovis (`VisXYContainer`, `VisArea`, `VisLine`, crosshair tooltip: net worth incl. cash & dividends, invested capital, cash), total + gain header, Vermögen/Rendite switch, `PeriodTabs`; component test
 - [x] T034 [P] [US1] Build `apps/web/app/components/dashboard/AllocationCard.vue` (donut, centre total, € / % toggle, legend by asset class) and `apps/web/app/components/dashboard/KpiCard.vue` (period select, rows per Story 1 scenario 6 with `InfoTooltip`); component tests
 - [x] T035 [P] [US1] Build `apps/web/app/components/dashboard/HoldingsCard.vue` (top/flop, range select), `AccountsCard.vue` (collapsible Depots/Konten, subtotals) and `ReviewBanner.vue` (unreviewed count, "Alle anzeigen" → `/budget/review`); component tests
-- [ ] T036 [US1] Assemble `apps/web/app/pages/index.vue`: widgets in `dashboard_layout` order, all queries keyed by account filter + period, empty states (never `NaN`), "Anpassen" modal to reorder/hide widgets (FR-013); `CashflowCard` and `BudgetsCard` show empty states until US5
+- [x] T036 [US1] Assemble `apps/web/app/pages/index.vue`: widgets in `dashboard_layout` order, all queries keyed by account filter + period, empty states (never `NaN`), "Anpassen" modal to reorder/hide widgets (FR-013); `CashflowCard` and `BudgetsCard` show empty states until US5
 - [ ] T037 [US1] Add Playwright journey `e2e/us1-overview.spec.ts`: demo seed; total equals `demo-expected.json` to the cent; switch periods and Vermögen/Rendite; account filter; hide/reorder a widget; desktop + 360 px without horizontal scroll
 
 **Checkpoint**: MVP — the overview works end to end on demo data.
