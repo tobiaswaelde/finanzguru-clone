@@ -12,6 +12,8 @@ The API skips checking third-party declarations because Drizzle exports types fo
 
 Run `pnpm --filter api build` and then `pnpm --filter api db:migrate` against a new database before using it. Back up an existing database before applying new migrations. The initial migration only adds tables and indexes; recovery from a failed upgrade uses a verified backup, not a destructive schema reset.
 
+## Owner password
+
 Set the owner password after migration. The CLI reads one password of 12–1024 characters from standard input. Pass it from a trusted password manager or an interactive no-echo prompt (Bash example):
 
 ```bash
@@ -20,3 +22,7 @@ printf '\n'
 printf '%s\n' "$owner_password" | pnpm --filter api owner:set-password
 unset owner_password
 ```
+
+## HTTP interface
+
+The development server exposes OpenAPI at `/api/docs` and `/api/docs-json`. Production disables both routes. `/api/health` is public; financial records and import routes require the owner session. Use the same-origin web proxy rather than publishing the API port. CSV uploads accept one file up to 20 MiB.
