@@ -82,6 +82,59 @@
     "rateLimited": "Zu viele Versuche. Bitte warte eine Minute.",
     "unavailable": "Der Server ist gerade nicht erreichbar. Bitte versuche es erneut."
   },
+  "import": {
+    "sources": "Datenquellen",
+    "title": "CSV importieren",
+    "account": "Zielkonto",
+    "chooseFile": "CSV-Datei auswählen",
+    "showPreview": "Vorschau anzeigen",
+    "preview": "Dateivorschau",
+    "format": "Format: {format}",
+    "unknownFormat": "Unbekannt",
+    "confirm": "Import bestätigen",
+    "dateFormat": "Datumsformat",
+    "decimalSeparator": "Dezimaltrennzeichen",
+    "skipRows": "Datenzeilen überspringen",
+    "saveMapping": "Zuordnung speichern als",
+    "error": "Der Import konnte nicht ausgeführt werden. Prüfe Datei und Zielkonto.",
+    "counts": "{imported} neu · {skipped} übersprungen · {failed} fehlerhaft",
+    "rowIssue": "Zeile {line}: {reason}",
+    "states": {
+      "running": "Import läuft",
+      "succeeded": "Import abgeschlossen",
+      "partial": "Import teilweise abgeschlossen",
+      "failed": "Import fehlgeschlagen"
+    },
+    "sourceStatus": {
+      "active": "Aktiv",
+      "needs_reauth": "Verbindung erneuern",
+      "error": "Fehler",
+      "planned": "Geplant",
+      "disabled": "Deaktiviert"
+    },
+    "fields": {
+      "date": "Buchungsdatum",
+      "amount": "Betrag",
+      "valueDate": "Valutadatum",
+      "counterparty": "Gegenpartei",
+      "iban": "IBAN",
+      "purpose": "Verwendungszweck",
+      "isin": "ISIN",
+      "quantity": "Stückzahl",
+      "price": "Kurs",
+      "fee": "Gebühren",
+      "tax": "Steuer",
+      "type": "Buchungstyp"
+    },
+    "reasons": {
+      "invalid_date": "Ungültiges Datum",
+      "invalid_amount": "Ungültiger Betrag",
+      "invalid_column_count": "Falsche Anzahl an Spalten",
+      "unknown_currency_no_rate": "Währung ohne Umrechnungskurs",
+      "not_executed": "Nicht ausgeführt",
+      "requires_depot": "Ein Depot ist erforderlich"
+    }
+  },
   "shell": {
     "brand": "Vermögensblick",
     "search": "Suche",
