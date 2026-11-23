@@ -1,5 +1,5 @@
 import { randomUUIDv7 } from 'node:crypto';
-import { dashboardWidgetKeys } from '@finance/shared';
+import { dashboardWidgetKeys, insuranceIntervals, insuranceTypes } from '@finance/shared';
 import { sql } from 'drizzle-orm';
 import {
   type AnySQLiteColumn,
@@ -323,4 +323,28 @@ export const budget = sqliteTable(
     createdAt: text('created_at').notNull(),
   },
   (t) => [check('budget_limit_positive', sql`${t.monthlyLimitCents} > 0`)],
+);
+
+export const insuranceContract = sqliteTable(
+  'insurance_contract',
+  {
+    id: id(),
+    type: text('type', { enum: insuranceTypes }).notNull(),
+    provider: text('provider').notNull(),
+    contractNumber: text('contract_number'),
+    premiumCents: integer('premium_cents').notNull(),
+    interval: text('interval', { enum: insuranceIntervals }).notNull(),
+    startDate: text('start_date').notNull(),
+    endDate: text('end_date'),
+    notes: text('notes'),
+    linkedCategoryId: text('linked_category_id').references(() => category.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    check(
+      'insurance_premium_positive',
+      sql`${t.premiumCents} BETWEEN 1 AND ${sql.raw(String(Math.floor(Number.MAX_SAFE_INTEGER / 12)))}`,
+    ),
+    check('insurance_date_order', sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate}`),
+    check('insurance_notes_length', sql`length(${t.notes}) <= 2000`),
+  ],
 );

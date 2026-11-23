@@ -8,6 +8,7 @@ import { CashflowModule } from './modules/cashflow/cashflow.module.js';
 import { CategoriesModule } from './modules/categories/categories.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ImportModule } from './modules/import/import.module.js';
+import { InsuranceModule } from './modules/insurance/insurance.module.js';
 import { InvestmentsModule } from './modules/investments/investments.module.js';
 import { OverviewModule } from './modules/overview/overview.module.js';
 
@@ -30,6 +31,7 @@ import { OverviewModule } from './modules/overview/overview.module.js';
     CashflowModule,
     CategoriesModule,
     BudgetsModule,
+    InsuranceModule,
   ],
 })
 export class AppModule {}

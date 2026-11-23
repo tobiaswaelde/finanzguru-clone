@@ -21,6 +21,17 @@ export const categorySources = ['manual', 'rule', 'import'] as const;
 export const reviewStatuses = ['unreviewed', 'reviewed'] as const;
 export const sourceKinds = ['csv', 'scalable_mcp', 'sparkasse_fints'] as const;
 export const sourceStatuses = ['active', 'needs_reauth', 'error', 'planned', 'disabled'] as const;
+export const insuranceTypes = [
+  'health',
+  'term_life',
+  'liability',
+  'household',
+  'disability',
+  'car',
+  'legal',
+  'other',
+] as const;
+export const insuranceIntervals = ['monthly', 'quarterly', 'semiannual', 'annual'] as const;
 export const dashboardWidgetKeys = [
   'networth',
   'allocation',
