@@ -1,0 +1,4 @@
+Auftragskonto;Buchungstag;Valutadatum;Buchungstext;Verwendungszweck;Beguenstigter/Zahlungspflichtiger;Kontonummer/IBAN;Betrag;Waehrung
+DE89370400440532013000;01.02.26;01.02.26;Gutschrift;Testgehalt;Demo-Firma;;"1000,00";EUR
+DE89370400440532013000;31.02.26;03.02.26;Lastschrift;Ungültiges Datum;Demo-Laden;;"-25,50";EUR
+DE89370400440532013000;03.02.26;03.02.26;Lastschrift;Ungültiger Betrag;Demo-Laden;;x;EUR

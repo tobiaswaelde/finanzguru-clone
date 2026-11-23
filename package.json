@@ -1,0 +1,27 @@
+{
+  "name": "finanzguru-clone",
+  "private": true,
+  "engines": {
+    "node": ">=26 <27"
+  },
+  "packageManager": "pnpm@10.34.9",
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names api,web 'pnpm --filter api dev' 'pnpm --filter web dev'",
+    "build": "pnpm -r run build",
+    "lint": "pnpm --filter web exec nuxt prepare && eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm --filter @finance/shared build && pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "test:e2e": "playwright test --config e2e/playwright.config.ts",
+    "docker:local": "docker compose -f compose.local.yaml up --build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "concurrently": "^10.0.7",
+    "eslint": "^9.0.0",
+    "prettier": "^3.10.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.0.0"
+  }
+}

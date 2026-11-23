@@ -1,0 +1,1 @@
+ALTER TABLE `csv_mapping` ADD `skip_rows` integer DEFAULT 0 NOT NULL;

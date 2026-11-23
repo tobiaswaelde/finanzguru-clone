@@ -1,0 +1,32 @@
+import { createHash } from 'node:crypto';
+import multipart from '@fastify/multipart';
+import secureSession from '@fastify/secure-session';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from 'nestjs-pino';
+import { cleanupOpenApiDoc, ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
+import { Reflector } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
+
+/** Apply transport configuration shared by the production entry point and integration tests. */
+export async function configureApp(
+  app: NestFastifyApplication,
+  { docs, sessionSecret, secure }: { docs: boolean; sessionSecret: string; secure: boolean },
+): Promise<void> {
+  await app.register(secureSession, {
+    key: createHash('sha256').update(sessionSecret).digest(),
+    cookieName: 'finance_session',
+    expiry: 86400,
+    cookie: { path: '/', sameSite: 'lax', httpOnly: true, secure, maxAge: 86400 },
+  });
+  await app.register(multipart, { limits: { fileSize: 20 * 1024 * 1024, files: 1, fields: 2, parts: 3 } });
+  app.useLogger(app.get(Logger));
+  app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ZodValidationPipe());
+  app.useGlobalInterceptors(new ZodSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalFilters(new HttpExceptionFilter());
+  if (docs) {
+    const config = new DocumentBuilder().setTitle('Finance API').setVersion('1.0').build();
+    SwaggerModule.setup('api/docs', app, () => cleanupOpenApiDoc(SwaggerModule.createDocument(app, config)));
+  }
+}

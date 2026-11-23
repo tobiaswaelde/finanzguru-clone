@@ -1,0 +1,40 @@
+name: finance-clone
+
+networks:
+  finance-internal: {}
+
+services:
+  finance-api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: ${FINANCE_LOCAL_API_ENV:-apps/api/.env}
+    environment:
+      COOKIE_SECURE: 'false'
+    volumes:
+      - ${FINANCE_LOCAL_DATA_DIR:-./data-local/api}:/data
+    networks:
+      - finance-internal
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/api/health').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  finance-web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NUXT_API_BASE_URL: http://finance-api:3001
+    ports:
+      - 127.0.0.1:${FINANCE_LOCAL_WEB_PORT:-3000}:3000
+    networks:
+      - finance-internal
+    depends_on:
+      finance-api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 5s
+      timeout: 3s
+      retries: 12

@@ -1,0 +1,17 @@
+.git/
+.claude/
+.specify/
+specs/
+**/node_modules/
+**/.nuxt/
+**/.output/
+**/dist/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.env*
+**/*.log
+**/*.db*
+apps/api/data/
+data-local/
+deploy/data/

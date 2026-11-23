@@ -1,0 +1,30 @@
+import { readFile } from 'node:fs/promises';
+import { expect, test } from './owner-test.js';
+
+test('filters positions, exports visible columns, and opens the security detail', async ({ page }) => {
+  await page.goto('/investments');
+  await expect(page.getByRole('heading', { name: 'Investments', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'ETF', exact: true }).click();
+  const holdings = page.getByRole('table');
+  await expect(holdings.getByRole('link', { name: 'Demo World ETF' })).toBeVisible();
+  await expect(holdings.getByRole('link', { name: 'Demo Apple' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Spalten' }).click();
+  await page.getByRole('checkbox', { name: 'WKN', exact: true }).uncheck();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('columnheader', { name: 'WKN', exact: true })).toHaveCount(0);
+  const downloading = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Export' }).click();
+  const download = await downloading;
+  const exportedPath = await download.path();
+  if (!exportedPath) throw new Error('CSV download did not save a file');
+  const csv = await readFile(exportedPath, 'utf8');
+  expect(csv.split('\r\n')[0]).not.toContain('wkn');
+  expect(csv).toContain('Demo World ETF');
+  expect(csv).not.toContain('Demo Apple');
+  await page.getByRole('link', { name: 'Demo World ETF' }).click();
+  await expect(page.getByRole('heading', { name: 'Demo World ETF' })).toBeVisible();
+  await expect(page.getByText('IE00B4L5Y983', { exact: true })).toBeVisible();
+  await page.goto('/investments');
+  await page.getByText('Verkaufte Investments', { exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Demo Microsoft' })).toBeVisible();
+});
