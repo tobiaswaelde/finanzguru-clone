@@ -17,6 +17,7 @@
     "docker:local": "docker compose -f compose.local.yaml up --build"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "concurrently": "^10.0.7",
     "eslint": "^9.0.0",
     "prettier": "^3.10.1",

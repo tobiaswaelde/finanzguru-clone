@@ -11,3 +11,5 @@ build/
 *.log
 /apps/api/data/
 /data-local/
+test-results/
+playwright-report/
