@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
-  modules: ['@nuxt/ui', '@nuxtjs/i18n'],
+  modules: ['@nuxt/ui', '@nuxtjs/i18n', '@nuxt/eslint'],
+  eslint: { config: { autoInit: false } },
   css: ['~/assets/css/main.css'],
   devtools: { enabled: false },
   i18n: {

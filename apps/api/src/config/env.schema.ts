@@ -4,7 +4,10 @@ import { z } from 'zod';
 export const apiEnvSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   DATABASE_PATH: z.string().min(1).default('./data/app.db'),
-  COOKIE_SECURE: z.enum(['true', 'false']).default('true').transform((value) => value === 'true'),
+  COOKIE_SECURE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true'),
   API_SESSION_SECRET: z.string().refine((value) => Buffer.byteLength(value, 'utf8') >= 32, {
     message: 'Expected at least 32 UTF-8 bytes',
   }),

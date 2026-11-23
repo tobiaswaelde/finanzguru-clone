@@ -1,0 +1,12 @@
+.claude/
+.specify/
+specs/
+**/.nuxt/
+**/.output/
+**/dist/
+**/coverage/
+**/test-results/
+**/playwright-report/
+apps/api/data/
+data-local/
+pnpm-lock.yaml
