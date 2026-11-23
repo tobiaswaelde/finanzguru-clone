@@ -72,3 +72,7 @@ See `deploy/README.md`. Validate the Compose configuration with example settings
 | V22 | Post-release | In a disposable directory, pull the pinned published images, start without building, log in, create a test record and recreate the containers | Login works and the record persists (SC-008) |
 
 Contracts: [http-api.md](./contracts/http-api.md), [data-source.md](./contracts/data-source.md), [csv-formats.md](./contracts/csv-formats.md). Entities: [data-model.md](./data-model.md).
+
+### V17 performance evidence
+
+Run `FINANCE_PERF=true pnpm exec playwright test e2e/performance.spec.ts --config e2e/playwright.config.ts --project=desktop`. It starts a production Nuxt build and a disposable seeded API instance. On `srv-ai` with Node 26 and Chromium, navigation to the visible overview chart took 368 ms with five years of snapshots and 10,000 transactions; multipart preview and confirmation of 50,000 additional rows took 5,646 ms (50,000 imported, no row failures). These are synthetic local measurements, not production guarantees.

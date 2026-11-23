@@ -175,6 +175,7 @@ export const transaction = sqliteTable(
   },
   (t) => [
     index('transaction_account_booking').on(t.accountId, t.bookingDate),
+    index('transaction_category_booking').on(t.categoryId, t.bookingDate),
     uniqueIndex('transaction_source_ref').on(t.source, t.sourceRef),
     check(
       'transaction_instrument_required',
@@ -220,7 +221,11 @@ export const positionLot = sqliteTable(
     costPerUnit: text('cost_per_unit').notNull(),
     closed: integer('closed', { mode: 'boolean' }).notNull().default(false),
   },
-  (t) => [check('position_lot_quantity_nonnegative', sql`CAST(${t.quantityOpen} AS REAL) >= 0`)],
+  (t) => [
+    index('position_lot_account').on(t.accountId),
+    index('position_lot_instrument').on(t.instrumentId),
+    check('position_lot_quantity_nonnegative', sql`CAST(${t.quantityOpen} AS REAL) >= 0`),
+  ],
 );
 
 export const dashboardLayout = sqliteTable(

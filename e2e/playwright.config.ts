@@ -7,6 +7,7 @@ const apiPort = process.env.E2E_API_PORT ?? '13101';
 const webPort = process.env.E2E_WEB_PORT ?? '13100';
 const apiUrl = `http://127.0.0.1:${apiPort}`;
 const webUrl = `http://127.0.0.1:${webPort}`;
+const perf = process.env.FINANCE_PERF === 'true';
 
 const workDir = mkdtempSync(join(tmpdir(), 'finance-e2e-'));
 
@@ -24,8 +25,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command:
-        'pnpm --filter api... build && pnpm --filter api db:migrate && pnpm --filter api db:seed --demo && node e2e/fixture-password.mjs | pnpm --filter api owner:set-password && pnpm --filter api start',
+      command: `pnpm --filter api... build && pnpm --filter api db:migrate && pnpm --filter api db:seed ${perf ? '--perf' : '--demo'} && node e2e/fixture-password.mjs | pnpm --filter api owner:set-password && pnpm --filter api start`,
       cwd: '..',
       port: Number(apiPort),
       env: {
@@ -37,10 +37,13 @@ export default defineConfig({
       },
     },
     {
-      command: `pnpm --filter web exec nuxt dev --host 127.0.0.1 --port ${webPort}`,
+      command: perf
+        ? 'pnpm --filter web... build && node apps/web/.output/server/index.mjs'
+        : `pnpm --filter web exec nuxt dev --host 127.0.0.1 --port ${webPort}`,
       cwd: '..',
       url: webUrl,
-      env: { NUXT_API_BASE_URL: apiUrl, API_BASE_URL: apiUrl },
+      timeout: 120_000,
+      env: { NUXT_API_BASE_URL: apiUrl, API_BASE_URL: apiUrl, NITRO_HOST: '127.0.0.1', NITRO_PORT: webPort },
     },
   ],
 });
