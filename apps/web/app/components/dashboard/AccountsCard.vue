@@ -14,7 +14,14 @@
         <li v-for="item in group.items" :key="item.id">
           <div class="flex flex-wrap justify-between gap-1">
             <span
-              >{{ item.name }} <small class="text-muted">({{ item.institution }})</small></span
+              ><NuxtLink
+                v-if="group.type === 'depots'"
+                class="hover:underline"
+                :to="{ path: '/investments', query: { accounts: item.id } }"
+                >{{ item.name }}</NuxtLink
+              >
+              <template v-else>{{ item.name }}</template>
+              <small class="text-muted"> ({{ item.institution }})</small></span
             >
             <Money :cents="item.valueCents" />
           </div>

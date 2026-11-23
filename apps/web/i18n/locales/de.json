@@ -136,6 +136,23 @@
     }
   },
   "investments": {
+    "views": "Investmentansicht",
+    "detail": "Wertpapierdetails",
+    "unavailable": "Dieses Wertpapier ist für die ausgewählten Konten nicht verfügbar.",
+    "bookingTypes": {
+      "income": "Einnahme",
+      "expense": "Ausgabe",
+      "transfer": "Umbuchung",
+      "buy": "Kauf",
+      "sell": "Verkauf",
+      "dividend": "Dividende",
+      "interest": "Zinsen",
+      "tax": "Steuer",
+      "fee": "Gebühr",
+      "split": "Aktiensplit",
+      "deposit": "Einzahlung",
+      "withdrawal": "Auszahlung"
+    },
     "positions": "Positionen",
     "assetClass": "Assetklassen",
     "performance": "Wertentwicklung",

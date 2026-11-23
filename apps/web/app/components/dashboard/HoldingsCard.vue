@@ -17,7 +17,7 @@
         <h3 class="mb-2 text-sm font-medium">{{ $t(`dashboard.${kind}`) }}</h3>
         <ul v-if="data?.[kind].length" class="space-y-2 text-sm">
           <li v-for="item in data[kind]" :key="item.instrumentId" class="flex flex-wrap justify-between gap-1">
-            <NuxtLink class="hover:underline" :to="`/investments/${item.instrumentId}`">
+            <NuxtLink class="hover:underline" :to="{ path: `/investments/${item.instrumentId}`, query: $route.query }">
               {{ item.name }}
             </NuxtLink>
             <Percent signed :value="item.changePct" />
