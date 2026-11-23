@@ -81,7 +81,7 @@ deploy/
 └── release.yml               # build + push both images to ghcr.io on main/tags
 apps/
 ├── web/                      # Nuxt 4 + Nuxt UI (frontend only)
-│   ├── nuxt.config.ts        # routeRules: '/api/**' → proxy to API_BASE_URL
+│   ├── nuxt.config.ts        # runtime configuration for the '/api/**' Nitro proxy
 │   ├── app/
 │   │   ├── app.vue
 │   │   ├── app.config.ts     # Nuxt UI theme (own brand colors)
