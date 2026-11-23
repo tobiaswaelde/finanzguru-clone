@@ -112,7 +112,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [x] T046 [US2] Implement `CsvSource` and endpoints `POST /api/import/csv` (`@fastify/multipart`, 20 MB limit; returns `jobId`, `detectedFormat`, `needsMapping`, 10-row preview, headers), `POST /api/import/csv/:jobId/confirm`, `GET /api/import/jobs/:id`, `GET/POST/DELETE /api/csv-mappings` in `apps/api/src/modules/import/`; e2e tests for V1–V4
 - [x] T047 [P] [US2] Implement manual entries (FR-056): `POST/PATCH/DELETE /api/accounts` in `apps/api/src/modules/accounts/` (delete with transactions → 409 unless `?force=true`) and `POST /api/transactions` in `apps/api/src/modules/transactions/`; e2e tests
 - [x] T048 [US2] Build `apps/web/app/components/import/CsvUpload.vue` (`UFileUpload`, account select), `ColumnMapper.vue` (preview, field selects, options, "Zuordnung speichern"), `ImportResult.vue` (counts + errors with line numbers) and page `apps/web/app/pages/settings/sources.vue` listing data sources; component tests
-- [ ] T049 [US2] Wire the header "Hinzufügen" menu in `apps/web/app/layouts/default.vue` to "CSV importieren", "Konto anlegen", "Transaktion erfassen" modals; component tests
+- [x] T049 [US2] Wire the header "Hinzufügen" menu in `apps/web/app/layouts/default.vue` to "CSV importieren", "Konto anlegen", "Transaktion erfassen" modals; component tests
 - [ ] T050 [US2] Add Playwright journey `e2e/us2-csv-import.spec.ts` (Sparkasse upload, re-upload 0 new, malformed → partial, unknown layout mapping saved and auto-detected, overview total updates)
 
 **Checkpoint**: Real data can be loaded; US1 works on it.

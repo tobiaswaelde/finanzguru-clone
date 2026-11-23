@@ -1,11 +1,15 @@
 import type {
+  accountSchema,
   accountsListSchema,
   csvConfirmSchema,
   csvPreviewSchema,
   dashboardLayoutSchema,
   importJobSchema,
   loginSchema,
+  manualAccountSchema,
+  manualTransactionSchema,
   sessionSchema,
+  transactionSchema,
 } from '@finance/shared';
 
 /** Same-origin API access, forwarding the request cookie during server rendering. */
@@ -19,6 +23,12 @@ export function useApi() {
       request<ReturnType<typeof dashboardLayoutSchema.parse>>('/api/dashboard/layout', { method: 'PUT', body }),
     /** Read visible accounts for the global selection. */
     accounts: () => request<ReturnType<typeof accountsListSchema.parse>>('/api/accounts'),
+    /** Create an account in the owner's balance ledger. */
+    createAccount: (body: ReturnType<typeof manualAccountSchema.parse>) =>
+      request<ReturnType<typeof accountSchema.parse>>('/api/accounts', { method: 'POST', body }),
+    /** Add a cash transaction under the selected account. */
+    createTransaction: (body: ReturnType<typeof manualTransactionSchema.parse>) =>
+      request<ReturnType<typeof transactionSchema.parse>>('/api/transactions', { method: 'POST', body }),
     /** Stage one CSV file for preview. */
     uploadCsv: (body: FormData) =>
       request<ReturnType<typeof csvPreviewSchema.parse>>('/api/import/csv', { method: 'POST', body }),

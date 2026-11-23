@@ -135,6 +135,22 @@
       "requires_depot": "Ein Depot ist erforderlich"
     }
   },
+  "manual": {
+    "addAccount": "Konto anlegen",
+    "addTransaction": "Transaktion erfassen",
+    "name": "Kontoname",
+    "balance": "Startsaldo in Euro",
+    "accountType": "Kontotyp",
+    "failed": "Der Eintrag konnte nicht gespeichert werden. Prüfe die Eingaben.",
+    "accountTypes": {
+      "checking": "Girokonto",
+      "savings": "Sparkonto",
+      "cash": "Bargeld",
+      "reference": "Verrechnungskonto",
+      "credit_card": "Kreditkarte",
+      "depot": "Depot"
+    }
+  },
   "shell": {
     "brand": "Vermögensblick",
     "search": "Suche",

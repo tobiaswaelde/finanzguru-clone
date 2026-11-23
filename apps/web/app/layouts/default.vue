@@ -9,9 +9,9 @@
           <UButton disabled color="neutral" variant="ghost">
             {{ $t('shell.search') }}
           </UButton>
-          <UButton disabled color="neutral" variant="ghost">
-            {{ $t('shell.add') }}
-          </UButton>
+          <UDropdownMenu :items="addItems">
+            <UButton color="neutral" variant="ghost">{{ $t('shell.add') }}</UButton>
+          </UDropdownMenu>
           <slot name="profile">
             <UButton color="neutral" variant="ghost" :loading="signingOut" @click="signOut">
               {{ $t('auth.signOut') }}
@@ -38,10 +38,24 @@
     <AccountFilter :options="accountOptions ?? []" />
   </UContainer>
   <slot />
+  <UModal v-model:open="addOpen" :title="addTitle">
+    <template #body>
+      <CsvUpload v-if="addKind === 'csv'" :accounts="accountOptions ?? []" @completed="refreshFinance" />
+      <ManualEntry
+        v-else-if="addKind"
+        :key="addKind"
+        :kind="addKind"
+        :accounts="accountOptions ?? []"
+        @completed="manualCompleted"
+      />
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
 import AccountFilter from '~/components/common/AccountFilter.vue';
+import CsvUpload from '~/components/import/CsvUpload.vue';
+import ManualEntry from '~/components/import/ManualEntry.vue';
 
 const links = [
   { to: '/', label: 'overview.title' },
@@ -53,6 +67,40 @@ const { accounts } = useAccountFilter();
 const accountQuery = computed(() => (accounts.value.length ? { accounts: accounts.value.join(',') } : {}));
 const { accounts: loadAccounts, logout } = useApi();
 const { data: accountOptions } = await useAsyncData('account-options', loadAccounts);
+const { t } = useI18n();
+const addOpen = ref(false);
+const addKind = ref<'csv' | 'account' | 'transaction'>();
+const addLabels = { csv: 'import.title', account: 'manual.addAccount', transaction: 'manual.addTransaction' } as const;
+const addTitle = computed(() => t(addKind.value ? addLabels[addKind.value] : 'shell.add'));
+const addItems = computed(() => [
+  ...Object.entries(addLabels).map(([kind, label]) => ({
+    label: t(label),
+    onSelect: () => {
+      addKind.value = kind as keyof typeof addLabels;
+      addOpen.value = true;
+    },
+  })),
+  { label: t('import.sources'), to: '/settings/sources' },
+]);
+
+/** Refresh account options and dashboard reads after an addition. */
+async function refreshFinance(): Promise<void> {
+  await refreshNuxtData('account-options');
+  await refreshNuxtData([
+    'dashboard-worth',
+    'dashboard-allocation',
+    'dashboard-kpis',
+    'dashboard-holdings',
+    'dashboard-accounts',
+    'dashboard-review',
+  ]);
+}
+
+/** Close the successful manual form and refresh the affected data. */
+function manualCompleted(): void {
+  addOpen.value = false;
+  void refreshFinance();
+}
 const signingOut = ref(false);
 const signOutFailed = ref(false);
 
