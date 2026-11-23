@@ -1,0 +1,4 @@
+date;time;status;reference;description;assetType;type;isin;shares;price;amount;fee;tax;currency
+2026-02-01;09:00;Executed;demo-1;Demo ETF;ETF;Savings plan;IE00B4L5Y983;2;50,00;-100,00;0,00;0,00;EUR
+2026-02-02;10:00;Executed;demo-2;Demo ETF;ETF;Distribution;IE00B4L5Y983;;;2,50;0,00;0,00;EUR
+2026-02-03;11:00;Cancelled;demo-3;Demo ETF;ETF;Buy;IE00B4L5Y983;1;50,00;-50,00;0,00;0,00;EUR
