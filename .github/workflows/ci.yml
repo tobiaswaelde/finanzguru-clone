@@ -9,6 +9,14 @@ permissions:
   contents: read
 
 jobs:
+  portable-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate the image-only Compose template (V21)
+        run: bash deploy/check-compose.sh
+
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
