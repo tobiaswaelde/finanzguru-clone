@@ -68,7 +68,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [x] T024 Build the deterministic demo dataset in `apps/api/src/database/demo.ts` (`db:seed --demo`): 1 depot with 3 ETFs + 2 stocks incl. one fully sold position, 1 reference account, 1 checking account, 3 years of daily prices, monthly salary/rent/groceries; run `RecomputeService` at the end; expected totals documented in `apps/api/test/fixtures/demo-expected.json`
 - [x] T025 Build the app shell in `apps/web/app/layouts/default.vue`: header with own logo/name (research R15), search/menu/profile slots, nav for Übersicht / Investments / Budget / Versicherung, floating account filter `apps/web/app/components/common/AccountFilter.vue` with state in `apps/web/app/composables/useAccountFilter.ts` synced to `?accounts=`, color-mode toggle; brand theme in `apps/web/app/app.config.ts`
 - [x] T026 [P] Add `apps/web/app/pages/login.vue`, route middleware `apps/web/app/middleware/auth.global.ts` (redirect to `/login` on 401), and typed `apps/web/app/composables/useApi.ts` (`useRequestFetch` on SSR to forward cookies; types from `packages/shared`)
-- [ ] T027 [P] Add shared UI atoms in `apps/web/app/components/common/` (`Money.vue` green/red by sign per FR-004, `Percent.vue`, `PeriodTabs.vue`, `EmptyState.vue`, `InfoTooltip.vue`) and placeholder pages for all four tabs; component tests in `apps/web/tests/common.spec.ts`
+- [x] T027 [P] Add shared UI atoms in `apps/web/app/components/common/` (`Money.vue` green/red by sign per FR-004, `Percent.vue`, `PeriodTabs.vue`, `EmptyState.vue`, `InfoTooltip.vue`) and placeholder pages for all four tabs; component tests in `apps/web/tests/common.spec.ts`
 
 **Checkpoint**: Log in, see the shell with four tabs and the account filter; demo data is in the DB.
 
