@@ -7,3 +7,4 @@ export * from './schemas/instrument.js';
 export * from './schemas/source.js';
 export * from './schemas/transaction.js';
 export * from './validators.js';
+export * from './sources.js';
