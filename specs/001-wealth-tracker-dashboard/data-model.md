@@ -153,6 +153,8 @@ Derived: `yearly_cost_cents = premium × {12,4,2,1}`.
 | errors | json | `[{line, reason}]`, max 500 kept |
 | started_at / finished_at | ts | |
 
+`source_account` links a provider-local `external_ref` to a local account. Its primary key is `(source_id, external_ref)`; links are removed if the source or account is removed. A CSV import with an explicit target does not overwrite these source links.
+
 ### csv_mapping
 | Field | Type | Rules |
 |-------|------|-------|

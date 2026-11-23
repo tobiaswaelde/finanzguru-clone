@@ -295,3 +295,17 @@ export const categorizationRule = sqliteTable(
   },
   (t) => [check('rule_priority_nonnegative', sql`${t.priority} >= 0`)],
 );
+
+export const sourceAccount = sqliteTable(
+  'source_account',
+  {
+    sourceId: text('source_id')
+      .notNull()
+      .references(() => dataSource.id, { onDelete: 'cascade' }),
+    externalRef: text('external_ref').notNull(),
+    accountId: text('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+  },
+  (t) => [primaryKey({ columns: [t.sourceId, t.externalRef] })],
+);
