@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import multipart from '@fastify/multipart';
 import secureSession from '@fastify/secure-session';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -18,6 +19,7 @@ export async function configureApp(
     expiry: 86400,
     cookie: { path: '/', sameSite: 'lax', httpOnly: true, secure, maxAge: 86400 },
   });
+  await app.register(multipart, { limits: { fileSize: 20 * 1024 * 1024, files: 1, fields: 2, parts: 3 } });
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ZodValidationPipe());

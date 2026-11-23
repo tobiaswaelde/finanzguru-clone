@@ -13,6 +13,7 @@
     "owner:set-password": "node dist/scripts/set-password.js"
   },
   "dependencies": {
+    "@fastify/multipart": "^10.1.9",
     "@fastify/secure-session": "^8.4.2",
     "@fastify/static": "^10.1.12",
     "@finance/shared": "workspace:*",

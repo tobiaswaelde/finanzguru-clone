@@ -25,6 +25,39 @@ export const csvMappingInputSchema = z.object({
   skipRows: z.int().min(0).max(1000).optional(),
 });
 
+export const csvPreviewSchema = z.object({
+  jobId: idSchema,
+  detectedFormat: z.enum(['sparkasse-camt-v8', 'sparkasse-mt940', 'scalable-transactions', 'generic']).nullable(),
+  needsMapping: z.boolean(),
+  preview: z.array(z.array(z.string())).max(10),
+  headers: z.array(z.string()),
+  mapping: csvMappingInputSchema.optional(),
+  accountId: idSchema.optional(),
+});
+
+export const csvConfirmSchema = z.object({
+  accountId: idSchema,
+  mapping: csvMappingInputSchema.optional(),
+  saveMappingAs: z.string().trim().min(1).max(80).optional(),
+});
+
+export const savedCsvMappingSchema = z
+  .object({
+    id: idSchema,
+    name: z.string().trim().min(1).max(80),
+    headerSignature: z.string().regex(/^[a-f0-9]{64}$/u),
+    defaultAccountId: idSchema.nullable(),
+  })
+  .extend(csvMappingInputSchema.shape)
+  .required({
+    delimiter: true,
+    encoding: true,
+    dateFormat: true,
+    decimalSeparator: true,
+    skipRows: true,
+  });
+export const saveCsvMappingSchema = savedCsvMappingSchema.omit({ id: true });
+
 export const importJobSchema = z.object({
   id: idSchema,
   status: z.enum(['running', 'succeeded', 'partial', 'failed']),

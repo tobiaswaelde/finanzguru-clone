@@ -29,6 +29,13 @@
       "when": 1795403155445,
       "tag": "0003_source_account",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795403396911,
+      "tag": "0004_csv_mapping_options",
+      "breakpoints": true
     }
   ]
 }

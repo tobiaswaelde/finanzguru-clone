@@ -275,6 +275,7 @@ export const csvMapping = sqliteTable('csv_mapping', {
   encoding: text('encoding').notNull(),
   dateFormat: text('date_format').notNull(),
   decimalSeparator: text('decimal_separator').notNull(),
+  skipRows: integer('skip_rows').notNull().default(0),
   columns: text('columns', { mode: 'json' }).$type<Record<string, number>>().notNull(),
   defaultAccountId: text('default_account_id').references(() => account.id, { onDelete: 'set null' }),
 });
