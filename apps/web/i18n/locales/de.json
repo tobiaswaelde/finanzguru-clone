@@ -190,6 +190,21 @@
       "realizedCents": "Realisiert"
     }
   },
+  "budget": {
+    "granularity": { "month": "Monat", "quarter": "Quartal", "year": "Jahr" },
+    "previous": "Vorheriger Zeitraum",
+    "next": "Nächster Zeitraum",
+    "current": "Aktueller Monat",
+    "history": "Verlauf",
+    "hatched": "Aktueller Zeitraum schraffiert",
+    "sankey": "Geldflüsse",
+    "categories": "Kategorien",
+    "expenses": "Ausgaben",
+    "income": "Einnahmen",
+    "balance": "Saldo",
+    "saved": "Gespart",
+    "rate": "Sparquote"
+  },
   "manual": {
     "addAccount": "Konto anlegen",
     "addTransaction": "Transaktion erfassen",
