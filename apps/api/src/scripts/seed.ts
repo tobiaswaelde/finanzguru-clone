@@ -1,4 +1,5 @@
 import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { seedDemo } from '../database/demo.js';
 import { openDatabase } from '../database/open-database.js';
 import * as schema from '../database/schema.js';
 import { seedDefaults } from '../database/seed.js';
@@ -10,7 +11,9 @@ try {
 }
 const connection = openDatabase(process.env.DATABASE_PATH ?? './data/app.db');
 try {
-  seedDefaults(drizzle(connection, { schema }));
+  const db = drizzle(connection, { schema });
+  seedDefaults(db);
+  if (process.argv.includes('--demo')) seedDemo(db);
 } finally {
   connection.close();
 }
