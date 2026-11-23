@@ -175,7 +175,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 **Independent Test**: Add a term-life contract at 23,62 € monthly; yearly cost shows 283,44 € (quickstart V12).
 
 - [x] T071 [US6] Add table `insurance_contract` to `apps/api/src/database/schema.ts` with a migration (`type` "`health`, `term_life`, `liability`, `household`, `disability`, `car`, `legal`, `other`"; `premium_cents` "> 0"; `interval` "`monthly`, `quarterly`, `semiannual`, `annual`"; `end_date` "≥ start_date"; `notes` "≤ 2000"; `linked_category_id` optional) and implement CRUD with derived `yearlyCostCents = premium × {12,4,2,1}` in `apps/api/src/modules/insurance/`; e2e tests
-- [ ] T072 [US6] Build `apps/web/app/components/insurance/ContractForm.vue`, `ContractList.vue` and `apps/web/app/pages/insurance/index.vue` (empty state "Versicherung hinzufügen", edit, delete with confirm); Playwright journey `e2e/us6-insurance.spec.ts`
+- [x] T072 [US6] Build `apps/web/app/components/insurance/ContractForm.vue`, `ContractList.vue` and `apps/web/app/pages/insurance/index.vue` (empty state "Versicherung hinzufügen", edit, delete with confirm); Playwright journey `e2e/us6-insurance.spec.ts`
 
 ---
 

@@ -224,6 +224,39 @@
     "saved": "Gespart",
     "rate": "Sparquote"
   },
+  "insurance": {
+    "add": "Versicherung hinzufügen",
+    "edit": "Versicherung bearbeiten",
+    "empty": "Noch keine Versicherungen erfasst.",
+    "provider": "Anbieter",
+    "kind": "Versicherungsart",
+    "number": "Vertragsnummer",
+    "premium": "Beitrag in Euro",
+    "interval": "Zahlungsintervall",
+    "start": "Vertragsbeginn",
+    "end": "Vertragsende",
+    "notes": "Notizen",
+    "category": "Verknüpfte Ausgabenkategorie",
+    "yearly": "Jahresbeitrag",
+    "deleteTitle": "Versicherung löschen?",
+    "deletePrompt": "Soll der Vertrag bei {provider} gelöscht werden?",
+    "intervals": {
+      "monthly": "Monatlich",
+      "quarterly": "Quartalsweise",
+      "semiannual": "Halbjährlich",
+      "annual": "Jährlich"
+    },
+    "types": {
+      "health": "Krankenversicherung",
+      "term_life": "Risiko-Lebensversicherung",
+      "liability": "Haftpflicht",
+      "household": "Hausrat",
+      "disability": "Berufsunfähigkeit",
+      "car": "Kfz-Versicherung",
+      "legal": "Rechtsschutz",
+      "other": "Sonstige"
+    }
+  },
   "manual": {
     "addAccount": "Konto anlegen",
     "addTransaction": "Transaktion erfassen",
