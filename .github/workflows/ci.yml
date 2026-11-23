@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v6
       - name: Validate the image-only Compose template (V21)
         run: bash deploy/check-compose.sh
+      - name: Verify SQLite backup, restore and retention
+        run: bash deploy/test-backup.sh
 
   checks:
     runs-on: ubuntu-latest
