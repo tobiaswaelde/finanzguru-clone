@@ -2,6 +2,15 @@
   "overview": {
     "title": "Übersicht"
   },
+  "dashboard": {
+    "netWorth": "Gesamtvermögen",
+    "gain": "Gewinn",
+    "invested": "Investiertes Kapital",
+    "cash": "Liquidität",
+    "seriesMode": "Diagrammansicht",
+    "value": "Vermögen",
+    "return": "Rendite"
+  },
   "common": {
     "notAvailable": "Hier sind noch keine Daten verfügbar.",
     "period": "Zeitraum",
