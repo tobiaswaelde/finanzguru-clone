@@ -3,6 +3,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { DrizzleModule } from './database/drizzle.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { OverviewModule } from './modules/overview/overview.module.js';
 
 /** Registers infrastructure and the HTTP feature modules. */
 @Module({
@@ -16,6 +17,7 @@ import { HealthModule } from './modules/health/health.module.js';
     DrizzleModule,
     AuthModule,
     HealthModule,
+    OverviewModule,
   ],
 })
 export class AppModule {}

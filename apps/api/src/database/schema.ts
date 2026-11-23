@@ -1,4 +1,5 @@
 import { randomUUIDv7 } from 'node:crypto';
+import { dashboardWidgetKeys } from '@finance/shared';
 import { sql } from 'drizzle-orm';
 import {
   type AnySQLiteColumn,
@@ -219,4 +220,17 @@ export const positionLot = sqliteTable(
     closed: integer('closed', { mode: 'boolean' }).notNull().default(false),
   },
   (t) => [check('position_lot_quantity_nonnegative', sql`CAST(${t.quantityOpen} AS REAL) >= 0`)],
+);
+
+export const dashboardLayout = sqliteTable(
+  'dashboard_layout',
+  {
+    widgetKey: text('widget_key', { enum: dashboardWidgetKeys }).primaryKey(),
+    position: integer('position').notNull().unique(),
+    visible: integer('visible', { mode: 'boolean' }).notNull(),
+  },
+  (t) => [
+    check('dashboard_position_range', sql`${t.position} BETWEEN 0 AND 7`),
+    check('dashboard_visible_boolean', sql`${t.visible} IN (0, 1)`),
+  ],
 );

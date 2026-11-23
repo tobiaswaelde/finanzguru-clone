@@ -1,6 +1,7 @@
+import { dashboardWidgetKeys } from '@finance/shared';
 import { and, eq, isNull } from 'drizzle-orm';
 import type { FinanceDatabase } from './drizzle.module.js';
-import { category, dataSource, institution } from './schema.js';
+import { category, dashboardLayout, dataSource, institution } from './schema.js';
 
 const defaults = [
   ['Wohnen', 'expense', 'primary', ['Miete / Wohngeld', 'Strom', 'Wohnnebenkosten']],
@@ -18,6 +19,11 @@ const defaults = [
 /** Insert seed defaults once; preserve existing rows and live source state. */
 export function seedDefaults(db: FinanceDatabase): void {
   db.transaction((tx) => {
+    if (!tx.select({ position: dashboardLayout.position }).from(dashboardLayout).limit(1).get()) {
+      tx.insert(dashboardLayout)
+        .values(dashboardWidgetKeys.map((widgetKey, position) => ({ widgetKey, position, visible: true })))
+        .run();
+    }
     tx.insert(institution).values({ name: 'Manuell' }).onConflictDoNothing().run();
     for (const [name, kind, color, children] of defaults) {
       tx.insert(category).values({ name, kind, color, isDefault: true }).onConflictDoNothing().run();

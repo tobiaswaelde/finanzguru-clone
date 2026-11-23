@@ -3,7 +3,8 @@ import secureSession from '@fastify/secure-session';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
-import { cleanupOpenApiDoc, ZodValidationPipe } from 'nestjs-zod';
+import { cleanupOpenApiDoc, ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
+import { Reflector } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 
 /** Apply transport configuration shared by the production entry point and integration tests. */
@@ -20,6 +21,7 @@ export async function configureApp(
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ZodValidationPipe());
+  app.useGlobalInterceptors(new ZodSerializerInterceptor(app.get(Reflector)));
   app.useGlobalFilters(new HttpExceptionFilter());
   if (docs) {
     const config = new DocumentBuilder().setTitle('Finance API').setVersion('1.0').build();

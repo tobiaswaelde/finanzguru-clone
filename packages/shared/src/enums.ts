@@ -21,3 +21,13 @@ export const categorySources = ['manual', 'rule', 'import'] as const;
 export const reviewStatuses = ['unreviewed', 'reviewed'] as const;
 export const sourceKinds = ['csv', 'scalable_mcp', 'sparkasse_fints'] as const;
 export const sourceStatuses = ['active', 'needs_reauth', 'error', 'planned', 'disabled'] as const;
+export const dashboardWidgetKeys = [
+  'networth',
+  'allocation',
+  'kpis',
+  'holdings',
+  'accounts',
+  'review',
+  'cashflow',
+  'budgets',
+] as const;
