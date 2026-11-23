@@ -148,7 +148,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [x] T060 [P] [US4] Implement `GET /api/investments/positions.csv` (`;`, de-DE decimals, UTF-8 BOM, requested columns only), `GET /api/investments/instruments/:id` and `GET /api/investments/transactions` (paging, type filter) in `apps/api/src/modules/investments/`; e2e tests
 - [x] T061 [US4] Build `apps/web/app/components/investments/PerformanceChart.vue` (value vs. invested, € / %, `PeriodTabs`), `PositionsTable.vue` (`UTable`, asset chips, column visibility, Export, collapsible "Verkaufte Investments") and `AssetClassTable.vue`; component tests
 - [x] T062 [US4] Build `apps/web/app/pages/investments/index.vue` (Positionen / Assetklassen), `apps/web/app/pages/investments/transactions.vue`, `apps/web/app/pages/investments/[instrumentId].vue`; link the overview holdings and accounts cards to them
-- [ ] T063 [US4] Add Playwright journey `e2e/us4-investments.spec.ts` (filter ETF, hide a column, export has visible columns only, open a position, sold section)
+- [x] T063 [US4] Add Playwright journey `e2e/us4-investments.spec.ts` (filter ETF, hide a column, export has visible columns only, open a position, sold section)
 
 ---
 

@@ -5,11 +5,14 @@
     </template>
     <div class="flex flex-wrap items-center gap-3">
       <div role="group" class="flex flex-wrap gap-1" :aria-label="$t('investments.assetClass')">
-        <UButton size="xs" :aria-pressed="!asset" @click="asset = undefined">{{ $t('investments.all') }}</UButton>
+        <UButton size="xs" :disabled="!ready" :aria-pressed="!asset" @click="asset = undefined">{{
+          $t('investments.all')
+        }}</UButton>
         <UButton
           v-for="item in assetClasses"
           :key="item"
           size="xs"
+          :disabled="!ready"
           :aria-pressed="asset === item"
           @click="asset = item"
           >{{ $t(`investments.classes.${item}`) }}</UButton
@@ -78,6 +81,10 @@ type Column = (typeof investmentExportColumns)[number];
 const props = defineProps<{ rows: Position[]; sold: Position[]; accounts?: string }>();
 const { t } = useI18n();
 const asset = defineModel<Position['assetClass'] | undefined>('asset');
+const ready = ref(false);
+onMounted(() => {
+  ready.value = true;
+});
 const selectable = investmentExportColumns.filter((key) => key !== 'realizedCents');
 const visible = ref<Column[]>([
   'name',
