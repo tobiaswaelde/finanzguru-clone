@@ -1,14 +1,14 @@
 import { Body, Controller, Get, HttpCode, Inject, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { loginSchema } from '@finance/shared';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import type { FastifyRequest } from 'fastify';
 import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { AuthService } from './auth.service.js';
 import './session.types.js';
 
 /** Login input accepted from the owner. */
-class LoginDto extends createZodDto(z.object({ password: z.string().min(1).max(1024) })) {}
+class LoginDto extends createZodDto(loginSchema) {}
 
 /** Handles login and the current browser session. */
 @Controller('auth')

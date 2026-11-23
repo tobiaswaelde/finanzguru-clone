@@ -22,7 +22,8 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm --filter api build && pnpm --filter api start',
+      command:
+        'pnpm --filter api... build && pnpm --filter api db:migrate && node e2e/fixture-password.mjs | pnpm --filter api owner:set-password && pnpm --filter api start',
       cwd: '..',
       port: Number(apiPort),
       env: {

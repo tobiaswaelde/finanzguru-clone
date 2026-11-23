@@ -114,6 +114,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@finance/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@nuxt/ui':
         specifier: ^4.13.0
         version: 4.13.0(88316e0b4fb743fd2bad4781a762f994)

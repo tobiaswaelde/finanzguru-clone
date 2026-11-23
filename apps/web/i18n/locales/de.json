@@ -2,6 +2,14 @@
   "overview": {
     "title": "Übersicht"
   },
+  "auth": {
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "password": "Passwort",
+    "invalid": "Das Passwort ist falsch.",
+    "rateLimited": "Zu viele Versuche. Bitte warte eine Minute.",
+    "unavailable": "Der Server ist gerade nicht erreichbar. Bitte versuche es erneut."
+  },
   "shell": {
     "brand": "Vermögensblick",
     "search": "Suche",
