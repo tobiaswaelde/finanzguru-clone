@@ -21,7 +21,7 @@ Build a self-hosted, single-user wealth tracker with four tabs (Übersicht, Inve
 
 **Testing**: Vitest across workspaces (backend via `unplugin-swc` for decorator metadata): domain math, CSV parsers, Nest module tests with `@nestjs/testing`, HTTP e2e with Fastify `inject`; `@nuxt/test-utils` for components; Playwright (E2E for P1 stories, 360 px + desktop); ESLint; `vue-tsc --noEmit` / `tsc --noEmit`
 
-**Target Platform**: Local development on Windows (Node 26, `pnpm dev`), then Docker: two images `ghcr.io/mfurti/finanzguru-clone-web` and `ghcr.io/mfurti/finanzguru-clone-api` built by GitHub Actions; production on the homelab server `rocky` (Rocky Linux, Docker Engine 29, Compose v5) in `/root/docker/finance-clone/compose.yaml`, web reachable at `192.168.178.36` (macvlan `FRITZBOX`); evergreen browsers
+**Target Platform**: Local development with Node 26 and pnpm, evergreen browsers, and Docker Compose. GitHub Actions builds `ghcr.io/tobiaswaelde/finanzguru-clone-web` and `ghcr.io/tobiaswaelde/finanzguru-clone-api`. A portable template runs the published images; no live host is part of this delivery.
 
 **Project Type**: Web application, pnpm monorepo (frontend + backend + shared package)
 
@@ -72,7 +72,7 @@ pnpm-workspace.yaml
 .dockerignore
 compose.local.yaml            # local container test: build both images from source, data in ./data-local
 deploy/
-├── compose.yaml              # server stack template → /root/docker/finance-clone/compose.yaml
+├── compose.yaml              # portable, image-only stack template
 ├── .env.example              # FINANCE_TAG, API secrets placeholders (no values)
 ├── backup.sh                 # SQLite online backup, 7 days
 └── README.md                 # rollout + update + rollback steps
@@ -154,11 +154,17 @@ apps/api/Dockerfile           # multi-stage, node:26-bookworm-slim, pnpm deploy 
 
 1. **Setup**: pnpm workspace, Node 26 pin, `apps/api` NestJS (Fastify) scaffold, `apps/web` Nuxt 4 + Nuxt UI scaffold with `/api` proxy, `packages/shared`, lint/typecheck/test tooling, Drizzle + SQLite, session auth, brand theme, layout + tabs.
 2. **Foundation**: schema + migrations, shared zod schemas, money/format utils, DataSource interface + ImportPipeline, default categories, demo seed, Swagger.
-3. **US2 CSV import (P1)** → **US1 Overview (P1)**: domain math (positions, snapshots, returns, cashflow) + all overview widgets.
+3. **US1 Overview (P1)** with demo data, then **US2 CSV import (P1)** with an end-to-end test that checks the imported total in the overview.
 4. **US3 Scalable MCP (P2)**, **US4 Investments (P2)**, **US5 Budget (P2)**.
 5. **US6 Insurance (P3)**, **US7 Sparkasse slot (P3)**.
 6. **Polish**: responsive pass, dark/light, empty states, E2E, performance check against SC-002.
-7. **Containerization & deployment**: Dockerfiles, `compose.local.yaml`, local container test, release workflow to GHCR, `deploy/compose.yaml` per server compose style, rollout to `/root/docker/finance-clone` only after the local test passed and with Max's OK for every server command.
+7. **Containerization & deployment**: Local source-built container test, GHCR release workflow, portable image-only Compose template, and backup tooling. Validate the template locally; verify actual image publication and pull-based persistence after a separately approved release. No live rollout.
+
+## Integration Checks
+
+- API: verify agreement among shared schemas, Nest validation, OpenAPI, and Nuxt consumers. Exercise unauthenticated access and resource filters.
+- SQLite: test migrations from an empty database and upgrades from the prior schema on disposable copies; verify rows and constraints without touching live data.
+- Vue: verify German copy and formats, loading/empty/error states, keyboard access, dark/light themes, and desktop and 360 px layouts.
 
 ## Risks
 
@@ -170,23 +176,18 @@ apps/api/Dockerfile           # multi-stage, node:26-bookworm-slim, pnpm deploy 
 | Return math errors | Property tests + reference spreadsheet dataset (SC-007). |
 | Personal financial data in repo | Fixtures are synthetic/anonymized; `apps/api/data/` and `.env` git-ignored. |
 | Two processes in dev/prod | Root `pnpm dev` runs both in parallel; `docker-compose.yml` optional; web reads `API_BASE_URL`. |
-| Plain HTTP at `192.168.178.36` | `secure` session cookie and the Scalable OAuth redirect need HTTPS: `COOKIE_SECURE` is configurable (false on plain LAN HTTP). If Scalable rejects an `http://192.168.178.36` redirect URI, add a Traefik router `finance.mfurti.de` (`entrypoints=websecure`, `certresolver=netcup`, `secured@file`) — open decision for Max. |
-| macvlan host isolation | The host cannot reach `.36` without a `macvlan-shim` route; not needed for LAN clients. Adding the route only after asking. |
+| Session and OAuth on a deployed host | Default to loopback. Document secure cookies and an HTTPS OAuth callback for non-loopback deployments. If the broker rejects a development callback, keep CSV available and report the live-sync validation gap. |
 | `better-sqlite3` native module in image | Build in a `node:26-bookworm-slim` builder with build tools, copy `node_modules` into the same base for runtime. |
 | Contract drift web ↔ api | Both import zod schemas from `packages/shared`; Swagger generated from the same schemas. |
 
 ## Deployment
 
-Flow: develop locally (`pnpm dev`) → test locally in containers (`compose.local.yaml`) → push to `main` → GitHub Actions publishes images to GHCR → server pulls images in `/root/docker/finance-clone/`. Source code never lives on the server.
+Build and test with `compose.local.yaml` first. The release workflow derives the lowercase GHCR namespace from the repository on `main` and version tags. Use its published images in `deploy/compose.yaml`:
 
-Server stack `/root/docker/finance-clone/compose.yaml` follows `/root/docker/AGENTS.md` ("Verbindlicher Compose-Stil", 22.11.2026) and mirrors the `habit-tracker` stack:
-
-- Top-level order `name: finance-clone`, `networks`, `services`; extra blocks after `services`.
-- Networks: `FRITZBOX` (external macvlan), `traefik-public` (external, written as `traefik-public: {}` on the web service), `finance-internal` (own bridge for web ↔ api; not `internal`, because the API needs outbound HTTPS to `mcp.scalable.capital`).
-- `finance-web`: `image: ghcr.io/mfurti/finanzguru-clone-web:${FINANCE_TAG:-latest}`, `FRITZBOX` with `ipv4_address: 192.168.178.36` and a fixed locally administered `mac_address` (`6e:46:43:4c:00:36`), plus `finance-internal`; `API_BASE_URL=http://finance-api:3001`.
-- `finance-api`: `image: ghcr.io/mfurti/finanzguru-clone-api:${FINANCE_TAG:-latest}`, only `finance-internal`; `env_file: .env` for `API_SESSION_SECRET`, `API_ENCRYPTION_KEY` (never in compose); bind mount `./data/api:/data` (no named or anonymous volumes; the image declares no `VOLUME`).
-- Both: `container_name`, `restart: unless-stopped`, `json-file` logging 10m × 3, `TZ: Europe/Berlin`, healthchecks (`/api/health`).
-- Server-side changes (creating the folder, `.env`, `docker compose pull/up`, `AGENTS.md` IP table + stack table, `README.md`, crontab entry for `backup.sh`, commits in `mfurti/homelab-rocky`) are each asked for first, as `AGENTS.md` requires.
+- Use a standard Compose bridge, no external network, and allow API egress for the read-only MCP client. Publish only the web port, on `127.0.0.1` by default.
+- Default image names to the fork's GHCR namespace. Allow operators to set the image prefix and tag; document pinning a version for repeatable updates and rollback.
+- Bind-mount `./data/api:/data`, load secrets from a git-ignored `.env` with an example containing only placeholders, and include service health checks.
+- Validate Compose configuration before review. Verify image publication and pull-based startup, login, and persistence on a disposable host or stack after the separately approved release. Document private-package pull credentials, reverse proxy setup, backup and restore without performing a live rollout.
 
 ## Complexity Tracking
 

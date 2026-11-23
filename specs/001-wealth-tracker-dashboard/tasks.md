@@ -41,7 +41,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [ ] T008 [P] Add CI in `.github/workflows/ci.yml`: Node 26, pnpm cache, `pnpm install --frozen-lockfile`, lint, typecheck, test, Playwright (desktop + mobile)
 - [ ] T009 [P] Add `apps/api/Dockerfile` (multi-stage on `node:26-bookworm-slim`: builder with build tools for `better-sqlite3`, `pnpm deploy --filter api --prod`, runtime as non-root `node`, `EXPOSE 3001`, no `VOLUME`, `DATABASE_PATH=/data/app.db`) and `apps/web/Dockerfile` (multi-stage, `nuxt build`, runs `.output/server/index.mjs` as non-root, `EXPOSE 3000`), plus `.dockerignore`
 - [ ] T010 Add `compose.local.yaml` for the local container test: top-level order `name: finance-clone`, `networks`, `services`; services `finance-api` and `finance-web` built from the two Dockerfiles, own bridge `finance-internal`, web published on `localhost:3000`, bind mount `./data-local/api:/data` (no named or anonymous volumes), `env_file: apps/api/.env`, `COOKIE_SECURE=false`, healthchecks on `/api/health`; verify `pnpm docker:local` starts both containers
-- [ ] T011 [P] Add the release workflow `.github/workflows/release.yml`: on push to `main` and tags `v*`, build both images with `docker/build-push-action` and push them to `ghcr.io/mfurti/finanzguru-clone-web` and `ghcr.io/mfurti/finanzguru-clone-api` with the tags `latest`, `sha-<short>` and the semver tag (`permissions: packages: write`)
+- [ ] T011 Add the release workflow `.github/workflows/release.yml`: on push to `main` and tags `v*`, build both images with `docker/build-push-action` and publish to the lowercase GHCR namespace derived from the current repository; use `latest`, `sha-<short>`, and the semver tag when applicable (`permissions: packages: write`). Validate workflow and tag rules without triggering a release.
 
 **Checkpoint**: `pnpm dev` serves web on :3000 proxying to api on :3001; `pnpm docker:local` runs the same in containers; all gates green.
 
@@ -128,7 +128,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - [ ] T051 [US3] Implement the OAuth client provider in `apps/api/src/modules/sources/scalable-mcp/oauth-provider.ts` (MCP SDK `OAuthClientProvider`, dynamic client registration, PKCE + state server-side, tokens only via `CryptoService` in `data_source.encrypted_credentials`; redirect URI from env `SCALABLE_REDIRECT_URI`, default `http://localhost:3000/api/sources/scalable/callback`); unit tests with a mocked authorization server
 - [ ] T052 [US3] Implement `apps/api/src/modules/sources/scalable-mcp/allowlist.ts` (explicit read-tool list; deny names/descriptions matching `order|trade|buy|sell|cancel|transfer|savings.?plan|withdraw`; `callTool` wrapper throws `ForbiddenToolError` before sending) with unit tests proving blocked tools never reach the transport (FR-054)
 - [ ] T053 [US3] Implement `apps/api/src/modules/sources/scalable-mcp/client.ts` (`StreamableHTTPClientTransport` to `https://mcp.scalable.capital/mcp`, refresh once on 401 then `AuthExpiredError`, other failures `UpstreamError`, 30 s timeout) and `tools/list` discovery stored in `data_source.tool_manifest` with allowlist decisions; unit tests
-- [ ] T054 [US3] Connect once to the real server; Max completes the Scalable login and consent personally. Record `tools/list` and read-tool responses, anonymize them into `apps/api/test/fixtures/scalable-mcp/`, then finalize the allowlist in `apps/api/src/modules/sources/scalable-mcp/allowlist.ts`. If dynamic client registration is refused, stop and report the blocker (research R3)
+- [ ] T054 [US3] With the owner's separate approval, connect once to the official Scalable Capital MCP service; the owner completes login and consent personally. Record `tools/list` and read-tool responses, anonymize them into `apps/api/test/fixtures/scalable-mcp/`, then finalize the allowlist in `apps/api/src/modules/sources/scalable-mcp/allowlist.ts`. If dynamic client registration is refused, report US3 as blocked and keep CSV available (research R3).
 - [ ] T055 [US3] Implement `apps/api/src/modules/sources/scalable-mcp/mapper.ts` (tool results → `SyncBatch` incl. `positionsSnapshot`) and `ScalableMcpSource` in `apps/api/src/modules/sources/scalable-mcp/scalable-mcp.source.ts`; contract tests against the fixtures in `apps/api/test/unit/scalable-mapper.spec.ts`
 - [ ] T056 [US3] Add `POST /api/sources/scalable/connect`, `GET /api/sources/scalable/callback`, `POST /api/sources/:id/sync` (202; 409 while running; 502 upstream), `DELETE /api/sources/:id`, `GET /api/sources` (never credentials) in `apps/api/src/modules/sources/sources.controller.ts`; positions mismatch → import-job warning; status transitions `active → needs_reauth → active`, any → `error`; e2e tests with a mocked MCP server
 - [ ] T057 [P] [US3] Add the optional daily sync in `apps/api/src/modules/sources/sync.scheduler.ts` via `@nestjs/schedule`, off unless `SCALABLE_DAILY_SYNC=true`; unit test
@@ -191,18 +191,18 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 
 ## Phase 10: Polish & Cross-Cutting Concerns
 
-**Purpose**: Quality across all stories, then local container test and server rollout
+**Purpose**: Quality across all stories, then local container testing and a portable deployment kit. Live rollout is out of scope.
 
 - [ ] T074 [P] Responsive and theme pass over all pages at 360 px, tablet and desktop in dark/light; `e2e/responsive.spec.ts` asserts no horizontal scroll on every tab (SC-006)
 - [ ] T075 [P] Performance: generator `apps/api/src/database/perf-seed.ts` for 5 years daily history + 10k transactions; add missing indexes; measure `/` < 2 s (SC-002) and 50k-row CSV import < 30 s; record results in `specs/001-wealth-tracker-dashboard/quickstart.md`
 - [ ] T076 [P] Security hardening: `@fastify/helmet` in `apps/api/src/main.ts`, CSP headers in `apps/web/nuxt.config.ts`, check credentials never appear in responses or logs, upload limits, `pnpm audit` without high/critical findings
 - [ ] T077 [P] Write `README.md` (setup, scripts, architecture, data sources, privacy note) and `apps/api/README.md` / `apps/web/README.md`
 - [ ] T078 Run quickstart V1–V18 locally with `pnpm dev`, then the local container test (`compose.local.yaml`, V19) and fix regressions; record the results in `specs/001-wealth-tracker-dashboard/quickstart.md`
-- [ ] T079 Create the server stack template `deploy/compose.yaml` per `/root/docker/AGENTS.md` "Verbindlicher Compose-Stil": order `name: finance-clone`, `networks` (`FRITZBOX` external, `traefik-public` external, `finance-internal` bridge), `services`; `finance-web` (`ghcr.io/mfurti/finanzguru-clone-web:${FINANCE_TAG:-latest}`, `FRITZBOX` `ipv4_address: 192.168.178.36` + `mac_address: 6e:46:43:4c:00:36`, `traefik-public: {}`, `finance-internal: {}`), `finance-api` (`ghcr.io/mfurti/finanzguru-clone-api:${FINANCE_TAG:-latest}`, `finance-internal` only, `env_file: .env`, bind mount `./data/api:/data`); both `container_name`, `restart: unless-stopped`, `json-file` 10m × 3, `TZ: Europe/Berlin`, healthchecks; plus `deploy/.env.example` (placeholders only)
-- [ ] T080 [P] Add `deploy/backup.sh` (SQLite online backup of `data/api/app.db` into `data/api/backup/`, keep 7 days, log to `/var/log/finance-clone-backup.log`) and `deploy/README.md` (rollout, update with `docker compose pull && docker compose up -d`, rollback via `FINANCE_TAG`, set owner password, open decisions: GHCR visibility, HTTPS via Traefik `finance.mfurti.de`)
-- [ ] T081 Verify that `release.yml` published both images for the release commit (quickstart V20) and that `docker compose -f deploy/compose.yaml config` is valid locally
-- [ ] T082 Server rollout on `rocky`, each command only after Max's OK (AGENTS.md): create `/root/docker/finance-clone/`, copy `deploy/compose.yaml` and `deploy/backup.sh`, create `.env` there (Max enters the secrets), `docker compose config` (V21), `docker compose pull`, `docker compose up -d`, set owner password, verify `http://192.168.178.36:3000` from the LAN and container recreation without data loss (V22); record the result in `deploy/README.md`
-- [ ] T083 After Max's OK: update `/root/docker/AGENTS.md` (IP table row `.36 | finance-web | 6e:46:43:4c:00:36 | aktiv`, stack table row `finance-clone`), `/root/docker/README.md`, add the crontab line for `backup.sh`, and commit/push in `mfurti/homelab-rocky` after checking `git diff --cached` for secrets; reference the result in `deploy/README.md`
+- [ ] T079 Create the image-only `deploy/compose.yaml` and `deploy/.env.example`: default image prefix `ghcr.io/tobiaswaelde/finanzguru-clone`, configurable `FINANCE_IMAGE_PREFIX` and `FINANCE_TAG`, one standard bridge with API egress, web host port bound to loopback by default, no API host port, `./data/api:/data` bind mount, `.env` for secrets, and health checks. Validate with Compose and placeholder settings (V21).
+- [ ] T080 [P] Add `deploy/backup.sh` for an online, consistent SQLite copy of `data/api/app.db` to `data/api/backup/` with seven-day retention and no host-specific paths; verify the backup opens successfully on a disposable database.
+- [ ] T081 Add a non-publishing V21 gate to `.github/workflows/ci.yml` that validates `deploy/compose.yaml` with example settings and checks the rendered image references, bind mount, loopback web binding, and absence of an API port.
+- [ ] T082 Add `deploy/test-backup.sh` to exercise restore, data integrity, and retention using disposable SQLite data; wire it into `.github/workflows/ci.yml` without modifying host data.
+- [ ] T083 Write `deploy/README.md` covering GHCR authentication, pinned image updates and rollback, owner password setup, loopback/TLS guidance, daily backup scheduling, restore, and post-release V20/V22. Verify pre-release steps locally and mark V20/V22 pending until both images have been published by a separately approved release. Do not perform a live rollout.
 
 ---
 
@@ -219,7 +219,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 - **US5 (P2)**: needs T039 (rules table) and T044 (categorize); fills the overview cards from US1.
 - **US6 (P3)**: after Foundational.
 - **US7 (P3)**: needs T048 (sources page).
-- **Polish (Phase 10)**: after all chosen stories. T078 (local test) blocks T079–T083; T082 needs T079–T081; T083 after T082.
+- **Polish (Phase 10)**: after all chosen stories. T078 (local test) blocks T079–T083; T081 needs T011 and T079; T082 needs T080 and follows T081 to avoid concurrent edits to CI; T083 follows T081 and T082.
 
 ### User Story Dependencies
 
@@ -230,7 +230,7 @@ Foundational ─┬─ US1 ─────────────┐
               │       └─ US7      │
               ├─ US4              │
               └─ US6              │
-                                  └─ Polish → local container test → deploy
+                              └─ Polish → local container test → portable deployment kit
 ```
 
 ### Within Each User Story
@@ -242,7 +242,7 @@ Schema/migration → domain → controller/service with e2e tests → UI compone
 - Setup: T002, T003, T004, T006, T007, T008 (then T009, T011)
 - Foundational: T014, T015, T017, T019, T020; later T026, T027
 - After Foundational: US1, US4 and US6 can run alongside each other; US2 alongside US1
-- Polish: T074, T075, T076, T077, T080
+- Polish: T074–T077 where files do not overlap; after T078, T079 and T080 can run in parallel.
 
 ## Parallel Examples per User Story
 
@@ -270,11 +270,12 @@ US3 → US4 → US5 → US6 → US7 → Polish. Each story is validated by its q
 
 ### Release Flow
 
-Develop locally (`pnpm dev`) → local container test (`compose.local.yaml`, T078) → push to `main` publishes images to GHCR (T081) → server pulls in `/root/docker/finance-clone/` (T082). Server commands only with Max's explicit OK.
+Develop locally (`pnpm dev`) → local container test (`compose.local.yaml`, T078) → validate the portable kit (T079–T083). After a separately approved release, verify GHCR publication and pull-based startup and persistence in a disposable environment (V20/V22). Do not let post-release evidence block review of the implementation PR.
 
 ## Notes
 
 - Each task = one commit referencing its task ID and issue #1; push right after each commit.
+- Run the applicable checks before each task commit. During bootstrap, record which gates do not exist yet and run the full configured suite once the tooling and smoke tests are in place.
 - Never commit real personal exports, recorded tokens or `.env` files; MCP fixtures are anonymized.
 - The Scalable integration never calls order-related tools (T052 enforces this in code).
-- Source code never goes to the server; it only gets `compose.yaml`, `.env`, `backup.sh` and `data/`.
+- No live host, ingress, external network, backup schedule, or package visibility changes are authorized by these tasks.

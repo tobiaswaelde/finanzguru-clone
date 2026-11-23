@@ -27,7 +27,7 @@ pnpm test          # Vitest in all workspaces: domain, parsers, Nest e2e (Fastif
 pnpm test:e2e      # Playwright: desktop + 360 px
 ```
 
-All four must pass before each task commit.
+Run applicable gates before each task commit. During bootstrap, record unavailable gates and run the full suite once the tooling and smoke tests are in place.
 
 ## Local container test (before every deploy)
 
@@ -39,9 +39,9 @@ docker compose -f compose.local.yaml down
 
 Run V1, V5, V12 and V19 against the containers. Deploy only after this passes.
 
-## Server rollout (each server command only after Max's OK)
+## Portable deployment template (no live rollout)
 
-See `deploy/README.md`: copy `deploy/compose.yaml` and `deploy/.env.example` to `/root/docker/finance-clone/`, fill `.env` on the server, `docker compose pull`, `docker compose up -d`, set the owner password, open `http://192.168.178.36:3000`.
+See `deploy/README.md`. Validate the Compose configuration with example settings and no real secrets. After an approved release has published both images, use a disposable directory with its own `.env` and data, pin the published tag, and run the pull-based smoke test. Do not run these checks against an existing installation.
 
 ## Validation scenarios
 
@@ -66,8 +66,8 @@ See `deploy/README.md`: copy `deploy/compose.yaml` and `deploy/.env.example` to 
 | V17 | Perf | Seed 5 y daily history + 10k tx, load `/` | Fully rendered < 2 s (SC-002) |
 | V18 | API | Open `http://localhost:3001/api/docs`; call `GET /api/overview/kpis` without a cookie | Swagger lists all endpoints from [http-api.md](./contracts/http-api.md); request returns 401 |
 | V19 | Docker local | `compose.local.yaml` up, import a CSV, `down`, `up` again | Data still present (bind mount `./data-local/api`); both healthchecks `healthy` |
-| V20 | Release | Push to `main` | `release.yml` publishes `finanzguru-clone-web` and `-api` with `latest` + `sha-*` tags to GHCR |
-| V21 | Server | On `rocky`: `docker compose -f /root/docker/finance-clone/compose.yaml config` | Valid; order `name`, `networks`, `services`; only bind mounts; `.36` + fixed MAC on `FRITZBOX` |
-| V22 | Server | After `pull` + `up -d`: open `http://192.168.178.36:3000` from the LAN; recreate containers | Login works; data unchanged after recreation (SC-008) |
+| V20 | Post-release | Inspect the authorized release run and registry | Both fork images exist with the expected release or commit SHA tag |
+| V21 | Template | Run `docker compose --env-file deploy/.env.example -f deploy/compose.yaml config --quiet` | Valid; only published images; bind-mounted data; web published only to loopback by default; API port not published |
+| V22 | Post-release | In a disposable directory, pull the pinned published images, start without building, log in, create a test record and recreate the containers | Login works and the record persists (SC-008) |
 
 Contracts: [http-api.md](./contracts/http-api.md), [data-source.md](./contracts/data-source.md), [csv-formats.md](./contracts/csv-formats.md). Entities: [data-model.md](./data-model.md).
