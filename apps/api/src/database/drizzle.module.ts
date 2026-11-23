@@ -2,6 +2,7 @@ import { Global, Module, type OnApplicationShutdown } from '@nestjs/common';
 import type Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { openDatabase } from './open-database.js';
+import * as schema from './schema.js';
 
 export const DB = Symbol('DB');
 
@@ -10,7 +11,7 @@ class ManagedDatabase implements OnApplicationShutdown {
   readonly db;
 
   constructor(private readonly connection: Database.Database) {
-    this.db = drizzle(connection);
+    this.db = drizzle(connection, { schema });
   }
 
   /** Close the underlying SQLite connection. */

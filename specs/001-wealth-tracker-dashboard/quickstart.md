@@ -12,6 +12,7 @@
 pnpm install
 Copy-Item apps/api/.env.example apps/api/.env   # API_SESSION_SECRET (≥32 bytes), API_ENCRYPTION_KEY (32-byte base64), PORT=3001
 Copy-Item apps/web/.env.example apps/web/.env   # API_BASE_URL=http://localhost:3001
+pnpm --filter api build
 pnpm --filter api db:migrate
 pnpm --filter api db:seed                       # default categories (+ demo dataset with --demo)
 pnpm --filter api owner:set-password

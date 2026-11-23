@@ -8,5 +8,6 @@ specs/
 **/test-results/
 **/playwright-report/
 apps/api/data/
+apps/api/src/database/migrations/
 data-local/
 pnpm-lock.yaml
