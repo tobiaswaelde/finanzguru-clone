@@ -19,3 +19,21 @@ export const accountSchema = accountInputSchema.required().extend({
   sourceId: idSchema.nullable(),
   lastSyncedAt: timestampSchema.nullable(),
 });
+
+export const accountsListSchema = z.array(accountSchema);
+const accountTreeItemSchema = z.object({
+  id: idSchema,
+  name: z.string(),
+  institution: z.string(),
+  logoKey: z.string().nullable(),
+  valueCents: centsSchema,
+});
+export const accountsTreeSchema = z.object({
+  groups: z.array(
+    z.object({
+      type: z.enum(['depots', 'accounts']),
+      totalCents: centsSchema,
+      items: z.array(accountTreeItemSchema.extend({ children: z.array(accountTreeItemSchema).optional() })),
+    }),
+  ),
+});

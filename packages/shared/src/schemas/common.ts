@@ -19,3 +19,4 @@ export const periodQuerySchema = z.object({
   from: dateSchema.optional(),
   to: dateSchema.optional(),
 });
+export const accountFilterQuerySchema = z.object({ accounts: accountsSchema.optional() });

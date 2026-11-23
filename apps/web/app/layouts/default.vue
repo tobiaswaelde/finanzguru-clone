@@ -35,7 +35,7 @@
     </UContainer>
   </header>
   <UContainer class="py-4">
-    <AccountFilter />
+    <AccountFilter :options="accountOptions ?? []" />
   </UContainer>
   <slot />
 </template>
@@ -51,7 +51,8 @@ const links = [
 ] as const;
 const { accounts } = useAccountFilter();
 const accountQuery = computed(() => (accounts.value.length ? { accounts: accounts.value.join(',') } : {}));
-const { logout } = useApi();
+const { accounts: loadAccounts, logout } = useApi();
+const { data: accountOptions } = await useAsyncData('account-options', loadAccounts);
 const signingOut = ref(false);
 const signOutFailed = ref(false);
 
