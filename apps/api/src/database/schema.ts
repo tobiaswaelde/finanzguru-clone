@@ -171,6 +171,7 @@ export const transaction = sqliteTable(
     source: text('source', { enum: ['csv', 'scalable_mcp', 'manual'] }).notNull(),
     sourceRef: text('source_ref'),
     fingerprint: text('fingerprint').notNull().unique(),
+    importJobId: text('import_job_id').references((): AnySQLiteColumn => importJob.id, { onDelete: 'set null' }),
   },
   (t) => [
     index('transaction_account_booking').on(t.accountId, t.bookingDate),
@@ -233,4 +234,64 @@ export const dashboardLayout = sqliteTable(
     check('dashboard_position_range', sql`${t.position} BETWEEN 0 AND 7`),
     check('dashboard_visible_boolean', sql`${t.visible} IN (0, 1)`),
   ],
+);
+
+export const importJob = sqliteTable(
+  'import_job',
+  {
+    id: id(),
+    sourceId: text('source_id')
+      .notNull()
+      .references(() => dataSource.id),
+    kind: text('kind', { enum: ['csv_upload', 'sync'] }).notNull(),
+    fileName: text('file_name'),
+    fileSha256: text('file_sha256'),
+    format: text('format'),
+    status: text('status', { enum: ['running', 'succeeded', 'partial', 'failed'] }).notNull(),
+    imported: integer('imported').notNull().default(0),
+    skipped: integer('skipped').notNull().default(0),
+    failed: integer('failed').notNull().default(0),
+    errors: text('errors', { mode: 'json' })
+      .$type<{ line?: number; reason: string }[]>()
+      .notNull()
+      .default(sql`'[]'`),
+    startedAt: text('started_at').notNull(),
+    finishedAt: text('finished_at'),
+  },
+  (t) => [
+    check('import_job_counts_nonnegative', sql`${t.imported} >= 0 AND ${t.skipped} >= 0 AND ${t.failed} >= 0`),
+    check(
+      'import_job_errors_bounded',
+      sql`json_valid(${t.errors}) AND json_type(${t.errors}) = 'array' AND json_array_length(${t.errors}) <= 500`,
+    ),
+  ],
+);
+
+export const csvMapping = sqliteTable('csv_mapping', {
+  id: id(),
+  name: text('name').notNull(),
+  headerSignature: text('header_signature').notNull().unique(),
+  delimiter: text('delimiter').notNull(),
+  encoding: text('encoding').notNull(),
+  dateFormat: text('date_format').notNull(),
+  decimalSeparator: text('decimal_separator').notNull(),
+  columns: text('columns', { mode: 'json' }).$type<Record<string, number>>().notNull(),
+  defaultAccountId: text('default_account_id').references(() => account.id, { onDelete: 'set null' }),
+});
+
+export const categorizationRule = sqliteTable(
+  'categorization_rule',
+  {
+    id: id(),
+    priority: integer('priority').notNull().unique(),
+    matchField: text('match_field', { enum: ['counterparty', 'purpose', 'counterparty_iban'] }).notNull(),
+    operator: text('operator', { enum: ['contains', 'equals', 'starts_with', 'regex'] }).notNull(),
+    pattern: text('pattern').notNull(),
+    amountSign: text('amount_sign', { enum: ['positive', 'negative'] }),
+    categoryId: text('category_id')
+      .notNull()
+      .references(() => category.id, { onDelete: 'cascade' }),
+    enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  },
+  (t) => [check('rule_priority_nonnegative', sql`${t.priority} >= 0`)],
 );

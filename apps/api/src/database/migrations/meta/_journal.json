@@ -15,6 +15,13 @@
       "when": 1795401258048,
       "tag": "0001_dashboard_layout",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795402408253,
+      "tag": "0002_import_tables",
+      "breakpoints": true
     }
   ]
 }

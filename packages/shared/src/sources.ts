@@ -1,4 +1,5 @@
 import type { accountTypes, assetClasses, sourceKinds, sourceStatuses, transactionTypes } from './enums.js';
+import type { csvMappingInputSchema } from './schemas/import.js';
 
 /** External source identifier. */
 export type SourceKind = (typeof sourceKinds)[number];
@@ -63,12 +64,4 @@ export interface SyncBatch {
 }
 
 /** Column indexes and optional decoding settings for a custom CSV format. */
-export interface CsvMapping {
-  columns: { date: number; amount: number } & Partial<
-    Record<'counterparty' | 'iban' | 'purpose' | 'isin' | 'quantity' | 'price' | 'type', number>
-  >;
-  delimiter?: string;
-  encoding?: string;
-  dateFormat?: string;
-  decimalSeparator?: string;
-}
+export type CsvMapping = ReturnType<typeof csvMappingInputSchema.parse>;
