@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:migrate": "node dist/scripts/migrate.js",
+    "db:seed": "node dist/scripts/seed.js",
     "owner:set-password": "node dist/scripts/set-password.js"
   },
   "dependencies": {
