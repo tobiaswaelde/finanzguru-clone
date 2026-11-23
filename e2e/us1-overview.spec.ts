@@ -4,6 +4,8 @@ test('shows exact demo net worth, filters accounts, and persists the customized 
   await page.goto('/');
   const chart = page.locator('[data-widget="networth"]');
   await expect(chart).toContainText(/65\.072,00\s€/u);
+  await expect(page.locator('[data-widget]')).toHaveCount(8);
+  await expect(page.locator('[data-widget="budgets"]')).toContainText(/Wohnen/u);
   await expect(chart.locator('svg').first()).toBeVisible();
   await chart.getByRole('button', { name: 'Rendite' }).click();
   await expect(chart.getByRole('button', { name: 'Rendite' })).toHaveAttribute('aria-pressed', 'true');

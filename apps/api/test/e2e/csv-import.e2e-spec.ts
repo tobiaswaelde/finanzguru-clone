@@ -41,7 +41,24 @@ it('previews, confirms, deduplicates and reuses custom mappings through HTTP', a
     }
     const preview = await upload('sparkasse-camt-v8.csv');
     expect(preview).toMatchObject({ detectedFormat: 'sparkasse-camt-v8', needsMapping: false });
+    const groups = (await app.inject({ url: '/api/categories', cookies })).json();
+    const expenses = groups.find((row: { name: string }) => row.name === 'Lebenshaltung');
+    const rule = await app.inject({
+      method: 'POST',
+      url: '/api/rules',
+      cookies,
+      payload: {
+        priority: 1,
+        categoryId: expenses.id,
+        matchField: 'counterparty',
+        operator: 'equals',
+        pattern: 'Demo-Laden',
+      },
+    });
+    expect(rule.statusCode).toBe(201);
     expect(await confirm(preview.jobId)).toMatchObject({ status: 'succeeded', imported: 2 });
+    const reviewed = await app.inject({ url: `/api/transactions?accounts=${target.id}&q=Demo-Laden`, cookies });
+    expect(reviewed.json().items).toMatchObject([{ categoryId: expenses.id, categorySource: 'rule' }]);
     expect(await confirm((await upload('sparkasse-camt-v8.csv')).jobId)).toMatchObject({ imported: 0, skipped: 2 });
     expect(await confirm((await upload('malformed.csv')).jobId)).toMatchObject({ status: 'partial', failed: 2 });
     const generic = await upload('unknown-layout.csv');

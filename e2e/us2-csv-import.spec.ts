@@ -28,6 +28,9 @@ test('imports bank CSV, skips duplicates, reports row errors, and reuses a mappi
   }
   try {
     await page.goto('/settings/sources');
+    const sparkasse = page.getByRole('heading', { name: 'Sparkasse (Live-Abfrage)' }).locator('..');
+    await expect(sparkasse).toContainText('Geplant');
+    await expect(sparkasse.getByRole('button')).toHaveCount(0);
     await upload('sparkasse-camt-v8.csv');
     await expect(page.getByText('Format: sparkasse-camt-v8')).toBeVisible();
     await confirm('2 neu · 0 übersprungen · 0 fehlerhaft');

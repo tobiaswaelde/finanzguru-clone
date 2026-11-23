@@ -75,8 +75,15 @@ Served by `apps/api` (NestJS, Fastify adapter, global prefix `api`, port 3001). 
 | POST | `/api/import/csv/:jobId/confirm` | `{ accountId, mapping? , saveMappingAs? }` → `ImportJob` |
 | GET | `/api/import/jobs/:id` | `ImportJob { status, imported, skipped, failed, errors[] }` |
 | GET/POST | `/api/csv-mappings` · DELETE `/api/csv-mappings/:id` | saved mappings |
+| GET/PATCH | `/api/settings` | `{ displayName, inflationRate }`; PATCH accepts either field, inflation as a decimal string from `0` through `0.5` |
+
+### Deferred Scalable live routes
+
+These are planned contracts, not registered routes. The production read-tool allowlist is empty until live discovery has separate approval.
+
+| Method | Path | Response |
+|--------|------|----------|
 | POST | `/api/sources/scalable/connect` | → `{ authorizationUrl }` (OAuth start, PKCE verifier kept server-side) |
 | GET | `/api/sources/scalable/callback?code&state` | stores encrypted tokens, discovers tools, redirects to `/settings/sources` |
 | POST | `/api/sources/:id/sync` | → `ImportJob` (202 while running); 409 if running; 502 on upstream error |
 | DELETE | `/api/sources/:id` | revoke local grant, keep data → 204 |
-| GET | `/api/settings` · PATCH | `{ displayName, inflationRate }` |

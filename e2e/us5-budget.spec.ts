@@ -53,9 +53,9 @@ test('changes calendar periods, categorizes with a rule, and shows the saved bud
     await page.getByRole('option', { name: 'Lebenshaltung', exact: true }).click();
     await page.getByLabel('Monatslimit in Euro').fill('500');
     await page.getByRole('button', { name: 'Speichern' }).click();
-    const card = page.getByText(/Ausgegeben:/u);
-    await expect(card).toContainText(/500,00\s€/u);
-    budgetId = (await (await api.get('/api/budgets')).json())[0]?.id;
+    await expect(page.getByText(/Ausgegeben:.*500,00\s€/u)).toBeVisible();
+    const limits: { id: string; monthlyLimitCents: number }[] = await (await api.get('/api/budgets')).json();
+    budgetId = limits.find((limit) => limit.monthlyLimitCents === 50000)?.id;
     await page.goto(`/${accountQuery}`);
     await expect(page.locator('[data-widget="budgets"]')).toContainText(/Lebenshaltung/u);
     await expect(page.locator('[data-widget="budgets"]')).toContainText(/490,00\s€/u);

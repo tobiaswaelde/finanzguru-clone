@@ -6,7 +6,7 @@ COPY tsconfig.base.json ./
 COPY packages/shared packages/shared
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web apps/web
-RUN pnpm install --frozen-lockfile --filter web... \
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter web... \
     && pnpm --filter web... build
 
 FROM node:26-bookworm-slim AS runtime

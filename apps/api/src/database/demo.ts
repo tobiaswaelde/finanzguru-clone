@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { shiftDays, shiftMonths } from '../domain/period.js';
 import { RecomputeService } from '../modules/import/recompute.service.js';
 import type { FinanceDatabase } from './drizzle.module.js';
-import { account, institution, instrument, price, transaction } from './schema.js';
+import { account, budget, category, institution, instrument, price, transaction } from './schema.js';
 
 export const demoStart = '2023-12-01';
 export const demoEnd = '2026-11-22';
@@ -104,6 +104,12 @@ export function seedDemo(db: FinanceDatabase): void {
           counterparty,
         });
       }
+    }
+    const housing = tx.select({ id: category.id }).from(category).where(eq(category.name, 'Wohnen')).get();
+    if (housing) {
+      tx.insert(budget)
+        .values({ categoryId: housing.id, monthlyLimitCents: 120000, createdAt: `${demoStart}T00:00:00Z` })
+        .run();
     }
     new RecomputeService().rebuild(tx, [depotId, referenceId, checkingId], demoStart, demoEnd);
   });
