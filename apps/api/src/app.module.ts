@@ -5,6 +5,7 @@ import { AccountsModule } from './modules/accounts/accounts.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ImportModule } from './modules/import/import.module.js';
+import { InvestmentsModule } from './modules/investments/investments.module.js';
 import { OverviewModule } from './modules/overview/overview.module.js';
 
 /** Registers infrastructure and the HTTP feature modules. */
@@ -22,6 +23,7 @@ import { OverviewModule } from './modules/overview/overview.module.js';
     OverviewModule,
     AccountsModule,
     ImportModule,
+    InvestmentsModule,
   ],
 })
 export class AppModule {}

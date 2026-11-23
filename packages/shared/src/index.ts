@@ -7,6 +7,7 @@ export * from './schemas/common.js';
 export * from './schemas/dashboard.js';
 export * from './schemas/import.js';
 export * from './schemas/instrument.js';
+export * from './schemas/investments.js';
 export * from './schemas/overview.js';
 export * from './schemas/source.js';
 export * from './schemas/transaction.js';

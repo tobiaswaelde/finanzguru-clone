@@ -5,5 +5,9 @@ import { OverviewController } from './overview.controller.js';
 import { OverviewService } from './overview.service.js';
 
 /** Registers the authenticated dashboard endpoints. */
-@Module({ controllers: [LayoutController, OverviewController], providers: [OverviewService, OverviewMetricsService] })
+@Module({
+  controllers: [LayoutController, OverviewController],
+  providers: [OverviewService, OverviewMetricsService],
+  exports: [OverviewService],
+})
 export class OverviewModule {}
