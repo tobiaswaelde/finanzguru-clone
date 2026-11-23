@@ -10,6 +10,7 @@ async function bootstrap(): Promise<void> {
   const env = parseApiEnv(process.env);
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
   app.setGlobalPrefix('api');
+  app.enableShutdownHooks();
   await app.listen(env.PORT, '0.0.0.0');
 }
 

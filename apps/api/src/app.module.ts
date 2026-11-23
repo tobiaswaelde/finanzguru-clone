@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BootstrapHealthController } from './bootstrap-health.controller.js';
+import { DrizzleModule } from './database/drizzle.module.js';
 
-@Module({ controllers: [BootstrapHealthController] })
+@Module({ imports: [DrizzleModule], controllers: [BootstrapHealthController] })
 export class AppModule {}
