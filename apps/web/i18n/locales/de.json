@@ -135,6 +135,44 @@
       "requires_depot": "Ein Depot ist erforderlich"
     }
   },
+  "investments": {
+    "positions": "Positionen",
+    "assetClass": "Assetklassen",
+    "performance": "Wertentwicklung",
+    "chartLegend": "Marktwert und investiertes Kapital",
+    "all": "Alle",
+    "columns": "Spalten",
+    "export": "Export",
+    "filteredTotal": "Wert der angezeigten Positionen:",
+    "sold": "Verkaufte Investments",
+    "transactions": "Transaktionen",
+    "classes": {
+      "stock": "Aktien",
+      "etf": "ETF",
+      "fund": "Fonds",
+      "bond": "Anleihen",
+      "crypto": "Krypto",
+      "commodity": "Rohstoffe",
+      "other": "Sonstige"
+    },
+    "fields": {
+      "name": "Name",
+      "assetClass": "Assetklasse",
+      "wkn": "WKN",
+      "isin": "ISIN",
+      "priceCents": "Kurs",
+      "dayChangePct": "Tagesänderung",
+      "quantity": "Stückzahl",
+      "valueCents": "Marktwert",
+      "entryValueCents": "Einstandswert",
+      "avgPrice": "Durchschnittskurs",
+      "gainCents": "Kursgewinn",
+      "gainPct": "Kursgewinn (%)",
+      "allocationPct": "Anteil",
+      "dividendsCents": "Dividenden",
+      "realizedCents": "Realisiert"
+    }
+  },
   "manual": {
     "addAccount": "Konto anlegen",
     "addTransaction": "Transaktion erfassen",
