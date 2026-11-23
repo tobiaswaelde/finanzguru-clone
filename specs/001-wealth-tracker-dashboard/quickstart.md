@@ -84,6 +84,8 @@ Contracts: [http-api.md](./contracts/http-api.md), [data-source.md](./contracts/
 - V13–V14: deferred by the owner. No broker session, token revocation test, or real read-tool inspection occurred.
 - V18: Fastify integration checked all implemented operations against Swagger, unauthenticated KPI 401, and owner-only settings changes. Deferred broker operations are not published in OpenAPI.
 - V19, plus V1/V5/V12 in local containers: image build, seeded dashboard, fixture import and insurance creation passed. After `down` and `up --wait --no-build`, both health checks were healthy; the two CSV bookings and the insurance contract persisted. No registry or deployment host was used.
+- V21: the rendered image-only template passed `bash deploy/check-compose.sh` for default and overridden settings. Backup restore and retention passed `bash deploy/test-backup.sh`. Locally tagged images passed initialization, login, online backup and recreation with `--no-build --pull never`.
+- V20 and V22: pending separately approved publication of both GHCR images. The local template rehearsal did not pull from GHCR and does not count as V22.
 
 ### V17 performance evidence
 
