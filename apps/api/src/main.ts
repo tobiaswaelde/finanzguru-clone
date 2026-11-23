@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module.js';
@@ -10,8 +11,13 @@ async function bootstrap(): Promise<void> {
   loadLocalEnv();
   const env = parseApiEnv(process.env);
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { bufferLogs: true });
+  const docs = process.env.NODE_ENV !== 'production';
+  await app.register(helmet, {
+    contentSecurityPolicy: !docs,
+    strictTransportSecurity: env.COOKIE_SECURE,
+  });
   await configureApp(app, {
-    docs: process.env.NODE_ENV !== 'production',
+    docs,
     sessionSecret: env.API_SESSION_SECRET,
     secure: env.COOKIE_SECURE,
   });

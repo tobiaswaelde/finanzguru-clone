@@ -7,11 +7,20 @@ test.skip(
 
 test('renders five years of data and imports 50,000 rows within budget', async ({ page }) => {
   test.setTimeout(75_000);
+  const violations: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error' && message.text().includes('Content Security Policy'))
+      violations.push(message.text());
+  });
   const renderStart = performance.now();
-  await page.goto('/');
+  const response = await page.goto('/');
   await expect(page.locator('[data-widget="networth"] svg').first()).toBeVisible({ timeout: 8_000 });
   const renderMs = performance.now() - renderStart;
+  expect(response?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
+  expect(violations).toEqual([]);
   const api = page.context().request;
+  const health = await api.get('/api/health');
+  expect(health.headers()['x-content-type-options']).toBe('nosniff');
   const account = await (await api.post('/api/accounts', { data: { type: 'checking', name: 'Perf import' } })).json();
   const day = new Date().toISOString().slice(0, 10);
   const rows = Array.from({ length: 50000 }, (_, index) => `${day},1.00,Test Vendor,Booking ${index}\n`);
