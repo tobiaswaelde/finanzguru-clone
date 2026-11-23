@@ -6,7 +6,8 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.11",
@@ -18,7 +19,10 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
+    "@swc/core": "^1.16.22",
     "@types/node": "^26.0.0",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "unplugin-swc": "^2.0.0",
+    "vitest": "^4.1.12"
   }
 }

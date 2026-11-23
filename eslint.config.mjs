@@ -7,7 +7,7 @@ export default withNuxt(
   },
   ...tseslint.configs.recommended.map((config) => ({
     ...config,
-    files: ['apps/api/**/*.ts', 'packages/**/*.ts', 'e2e/**/*.ts'],
+    files: ['apps/api/**/*.{ts,mts}', 'packages/**/*.ts', 'e2e/**/*.ts'],
   })),
   {
     files: ['apps/api/**/*.ts'],
