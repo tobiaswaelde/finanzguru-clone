@@ -25,7 +25,7 @@ Served by `apps/api` (NestJS, Fastify adapter, global prefix `api`, port 3001). 
 
 | Method | Path | Response |
 |--------|------|----------|
-| GET | `/api/overview/net-worth?period&accounts&mode=value\|return` | `{ totalCents, gainCents, gainPct, series: [{ date, valueCents, investedCents, cashCents, returnPct }] }` (≤ 400 points) |
+| GET | `/api/overview/net-worth?period&accounts&mode=value\|return` | `{ totalCents, gainCents, gainPct, series: [{ date, valueCents, investedCents, cashCents, returnPct }] }` (≤ 400 points; percentage fields are decimal ratios; totals are null for an empty range) |
 | GET | `/api/overview/allocation?accounts&unit=eur\|pct` | `{ totalCents, slices: [{ key, label, count, valueCents, pct }] }` |
 | GET | `/api/overview/kpis?period&accounts` | `{ investedCents, priceGain: {cents,pct}, realized: {grossCents,netCents,pct}, otherGainsCents, dividends: {grossCents,netCents}, interest: {grossCents,netCents}, taxesFeesCents, totalReturnCents, twror, irr, inflation, realReturn }` (rates as decimal strings, null if not computable) |
 | GET | `/api/overview/holdings/top-flop?range=1D\|1W\|1M\|1Y&accounts` | `{ top: Holding[], flop: Holding[] }`, `Holding = { instrumentId, name, priceCents, changePct, changeCents }` |
