@@ -58,8 +58,8 @@
         <HoldingsCard v-else-if="widget.widgetKey === 'holdings'" v-model:range="range" :data="holdings ?? null" />
         <AccountsCard v-else-if="widget.widgetKey === 'accounts'" :data="accountTree ?? null" />
         <ReviewBanner v-else-if="widget.widgetKey === 'review'" :count="review?.count ?? null" />
-        <CashflowCard v-else-if="widget.widgetKey === 'cashflow'" />
-        <BudgetsCard v-else />
+        <CashflowCard v-else-if="widget.widgetKey === 'cashflow'" :data="cashflow ?? undefined" />
+        <BudgetsCard v-else :data="budgets ?? undefined" :names="budgetNames" />
       </section>
     </div>
   </UContainer>
@@ -70,6 +70,9 @@ import {
   dashboardWidgetKeys,
   type accountsTreeSchema,
   type allocationSchema,
+  type budgetsSchema,
+  type cashflowSummarySchema,
+  type categoryTreeSchema,
   type dashboardLayoutSchema,
   type kpisSchema,
   type netWorthSchema,
@@ -90,6 +93,22 @@ type Period = (typeof periods)[number];
 const { get, saveDashboardLayout } = useApi();
 const { accounts } = useAccountFilter();
 const scope = computed(() => accounts.value.join(',') || undefined);
+const { data: cashflow } = useAsyncData(
+  'dashboard-cashflow',
+  () => get<ReturnType<typeof cashflowSummarySchema.parse>>('/api/cashflow/summary', { accounts: scope.value }),
+  { watch: [scope] },
+);
+const { data: budgets } = useAsyncData(
+  'dashboard-budgets',
+  () => get<ReturnType<typeof budgetsSchema.parse>>('/api/budgets', { accounts: scope.value }),
+  { watch: [scope] },
+);
+const { data: tree } = useAsyncData('dashboard-budget-names', () =>
+  get<ReturnType<typeof categoryTreeSchema.parse>>('/api/categories'),
+);
+const budgetNames = computed(() =>
+  Object.fromEntries((tree.value ?? []).flatMap((row) => [row, ...row.children]).map((row) => [row.id, row.name])),
+);
 const netPeriod = ref<Period>('ALL');
 const kpiPeriod = ref<Period>('ALL');
 const mode = ref<'value' | 'return'>('value');

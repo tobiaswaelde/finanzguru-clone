@@ -18,6 +18,9 @@ export function useApi() {
   return {
     /** Read a typed owner-scoped resource via the same-origin proxy. */
     get: <T>(path: `/api/${string}`, query?: Record<string, string | undefined>) => request<T>(path, { query }),
+    /** Send a JSON mutation to an authenticated same-origin route. */
+    mutate: async <T>(path: `/api/${string}`, method: 'POST' | 'PATCH' | 'DELETE', body?: object): Promise<T> =>
+      (await request(path, { method, body })) as T,
     /** Replace the complete owner dashboard layout. */
     saveDashboardLayout: (body: ReturnType<typeof dashboardLayoutSchema.parse>) =>
       request<ReturnType<typeof dashboardLayoutSchema.parse>>('/api/dashboard/layout', { method: 'PUT', body }),
