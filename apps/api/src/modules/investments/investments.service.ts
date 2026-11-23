@@ -1,9 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { investmentPositionQuerySchema, investmentPositionSchema } from '@finance/shared';
-import { and, asc, desc, eq, inArray, lt } from 'drizzle-orm';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  investmentExportColumns,
+  type investmentPositionQuerySchema,
+  type investmentPositionSchema,
+  type investmentTransactionsQuerySchema,
+} from '@finance/shared';
+import { and, asc, count, desc, eq, gte, inArray, lt, lte } from 'drizzle-orm';
 import { DB, type FinanceDatabase } from '../../database/drizzle.module.js';
 import { account, instrument, positionLot, price, transaction } from '../../database/schema.js';
 import { euroToCents, financeDecimal, sumCents } from '../../domain/money.js';
+import { resolvePeriod } from '../../domain/period.js';
 import { PositionBook } from '../../domain/positions.js';
 import { OverviewService, type OverviewQuery } from '../overview/overview.service.js';
 
@@ -180,5 +186,105 @@ export class InvestmentsService {
       ...row,
       pct: total > 0 ? row.valueCents / total : null,
     }));
+  }
+
+  /** Return a bounded page of portfolio bookings scoped before the count and page queries. */
+  transactions(query: ReturnType<typeof investmentTransactionsQuerySchema.parse>) {
+    const ids = this.depotIds(query.accounts);
+    if (query.from && query.to && query.from > query.to) throw new BadRequestException();
+    if (!ids.length) return { items: [], total: 0 };
+    const scope = and(
+      inArray(transaction.accountId, ids),
+      query.type ? eq(transaction.type, query.type) : undefined,
+      query.from ? gte(transaction.bookingDate, query.from) : undefined,
+      query.to ? lte(transaction.bookingDate, query.to) : undefined,
+    );
+    return {
+      items: this.db
+        .select()
+        .from(transaction)
+        .where(scope)
+        .orderBy(desc(transaction.bookingDate), desc(transaction.id))
+        .limit(query.pageSize)
+        .offset((query.page - 1) * query.pageSize)
+        .all(),
+      total: this.db.select({ total: count() }).from(transaction).where(scope).get()?.total ?? 0,
+    };
+  }
+
+  /** Return one investment only if it belongs to a selected visible depot. */
+  detail(id: string, query: OverviewQuery) {
+    const pos =
+      this.positions({ status: 'open', accounts: query.accounts }).find((row) => row.instrumentId === id) ??
+      this.positions({ status: 'sold', accounts: query.accounts }).find((row) => row.instrumentId === id);
+    const item = pos && this.db.select().from(instrument).where(eq(instrument.id, id)).get();
+    if (!item || !pos) throw new NotFoundException();
+    const prices = this.db
+      .select({ date: price.date, close: price.close })
+      .from(price)
+      .where(eq(price.instrumentId, id))
+      .orderBy(asc(price.date))
+      .all();
+    const latest = prices.at(-1)?.date ?? new Date().toISOString().slice(0, 10);
+    let range;
+    try {
+      range = resolvePeriod(query, latest, prices[0]?.date ?? latest);
+    } catch {
+      throw new BadRequestException();
+    }
+    const ids = this.depotIds(query.accounts);
+    const ledger = this.db
+      .select()
+      .from(transaction)
+      .where(
+        and(
+          inArray(transaction.accountId, ids),
+          eq(transaction.instrumentId, id),
+          gte(transaction.bookingDate, range.from),
+          lte(transaction.bookingDate, range.to),
+        ),
+      )
+      .orderBy(desc(transaction.bookingDate), desc(transaction.id))
+      .limit(200)
+      .all();
+    return {
+      instrument: item,
+      position: pos,
+      series: prices.filter((row) => row.date >= range.from && row.date <= range.to),
+      transactions: ledger,
+    };
+  }
+
+  /** Export only selected columns, quoting separators and neutralizing spreadsheet formula text. */
+  csv(query: PositionQuery & { columns?: string }): string {
+    type Column = (typeof investmentExportColumns)[number];
+    const available = new Set<string>(investmentExportColumns);
+    const requested = query.columns?.split(',') ?? [...investmentExportColumns];
+    if (requested.some((field) => !available.has(field)) || new Set(requested).size !== requested.length)
+      throw new BadRequestException();
+    const columns = requested as Column[];
+    /** Serialize a cell without interpreting imported labels as spreadsheet formulas. */
+    function cell(field: Column, value: Position[Column]): string {
+      if (value === null || value === undefined) return '';
+      const text =
+        field.endsWith('Cents') && typeof value === 'number'
+          ? (value / 100).toFixed(2).replace('.', ',')
+          : field.endsWith('Pct') && typeof value === 'number'
+            ? `${new financeDecimal(value).times(100).toFixed(4).replace('.', ',')}%`
+            : field === 'quantity' || field === 'avgPrice'
+              ? String(value).replace('.', ',')
+              : /^[\s]*[=+@-]/u.test(String(value))
+                ? `'${String(value)}`
+                : String(value);
+      return `"${text.replace(/"/gu, '""')}"`;
+    }
+    return (
+      '\uFEFF' +
+      [
+        columns.join(';'),
+        ...this.positions(query).map((row) => columns.map((field) => cell(field, row[field])).join(';')),
+      ].join('\r\n') +
+      '\r\n'
+    );
   }
 }

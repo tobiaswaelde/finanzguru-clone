@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { assetClasses } from '../enums.js';
+import { assetClasses, transactionTypes } from '../enums.js';
+import { instrumentSchema } from './instrument.js';
+import { transactionSchema } from './transaction.js';
 import { accountsSchema, centsSchema, dateSchema, decimalSchema, idSchema, periodQuerySchema } from './common.js';
 
 export const investmentPositionQuerySchema = z.object({
@@ -29,6 +31,44 @@ export const investmentPositionSchema = z.object({
   realizedCents: centsSchema.optional(),
 });
 export const investmentPositionsSchema = z.array(investmentPositionSchema);
+export const investmentExportColumns = [
+  'name',
+  'assetClass',
+  'wkn',
+  'isin',
+  'priceCents',
+  'dayChangePct',
+  'quantity',
+  'valueCents',
+  'entryValueCents',
+  'avgPrice',
+  'gainCents',
+  'gainPct',
+  'allocationPct',
+  'dividendsCents',
+  'realizedCents',
+] as const;
+export const investmentExportQuerySchema = investmentPositionQuerySchema.extend({
+  columns: z.string().max(250).optional(),
+});
+export const investmentTransactionsQuerySchema = z.object({
+  accounts: accountsSchema.optional(),
+  type: z.enum(transactionTypes).optional(),
+  from: dateSchema.optional(),
+  to: dateSchema.optional(),
+  page: z.coerce.number().int().min(1).max(100000).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+});
+export const investmentTransactionsSchema = z.object({
+  items: z.array(transactionSchema),
+  total: z.int().nonnegative(),
+});
+export const investmentDetailSchema = z.object({
+  instrument: instrumentSchema,
+  position: investmentPositionSchema,
+  series: z.array(z.object({ date: dateSchema, close: decimalSchema })),
+  transactions: z.array(transactionSchema),
+});
 export const investmentPerformanceSchema = z.object({
   valueCents: centsSchema.nullable(),
   gainCents: centsSchema.nullable(),
