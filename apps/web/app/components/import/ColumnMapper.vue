@@ -20,6 +20,7 @@
         <select
           class="rounded border border-default bg-default p-2"
           :value="columns[field] ?? ''"
+          :aria-label="$t(`import.fields.${field}`)"
           @change="setColumn(field, $event)"
         >
           <option value="">–</option>

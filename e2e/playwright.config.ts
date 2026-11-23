@@ -12,6 +12,7 @@ const workDir = mkdtempSync(join(tmpdir(), 'finance-e2e-'));
 
 export default defineConfig({
   testDir: '.',
+  globalSetup: './setup.ts',
   globalTeardown: './teardown.ts',
   metadata: { workDir } satisfies FullConfig['metadata'],
   retries: process.env.CI ? 1 : 0,

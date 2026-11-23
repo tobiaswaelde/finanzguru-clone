@@ -1,12 +1,13 @@
 <template>
   <div class="space-y-4">
-    <UFormField :label="$t('import.account')">
+    <label class="grid gap-1 text-sm">
+      {{ $t('import.account') }}
       <select v-model="target" class="w-full rounded border border-default bg-default p-2">
         <option value="">–</option>
         <option v-for="account in accounts" :key="account.id" :value="account.id">{{ account.name }}</option>
       </select>
-    </UFormField>
-    <UFileUpload v-model="file" accept=".csv,text/csv" :label="$t('import.chooseFile')" />
+    </label>
+    <UFileUpload v-model="file" accept=".csv,text/csv" :label="$t('import.chooseFile')" :disabled="!ready || pending" />
     <UButton v-if="!preview" :disabled="!file" :loading="pending" @click="stage">{{
       $t('import.showPreview')
     }}</UButton>
@@ -44,6 +45,11 @@ const mapping = ref<CsvMapping>();
 const saveAs = ref('');
 const failed = ref(false);
 const pending = ref(false);
+const ready = ref(false);
+
+onMounted(() => {
+  ready.value = true;
+});
 
 watch(file, () => {
   preview.value = undefined;

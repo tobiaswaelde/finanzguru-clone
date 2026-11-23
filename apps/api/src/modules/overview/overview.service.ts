@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import type { periodQuerySchema } from '@finance/shared';
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { DB, type FinanceDatabase } from '../../database/drizzle.module.js';
 import { account, netWorthSnapshot } from '../../database/schema.js';
 import { sumCents } from '../../domain/money.js';
@@ -19,22 +19,52 @@ export class OverviewService {
   daily(query: OverviewQuery) {
     const s = netWorthSnapshot;
     const ids = query.accounts?.split(',');
-    const rows = this.db
+    const snapshots = this.db
       .select({
+        id: s.accountId,
+        type: account.type,
         date: s.date,
-        valueCents: sql<number>`sum(${s.valueCents})`.mapWith(Number),
-        investedCents: sql<number>`sum(${s.investedCents})`.mapWith(Number),
-        cashCents: sql<number>`sum(case when ${account.type} <> 'depot' then ${s.valueCents} else 0 end)`.mapWith(
-          Number,
-        ),
-        externalFlowCents: sql<number>`sum(${s.externalFlowCents})`.mapWith(Number),
+        valueCents: s.valueCents,
+        investedCents: s.investedCents,
+        externalFlowCents: s.externalFlowCents,
       })
       .from(s)
       .innerJoin(account, eq(s.accountId, account.id))
       .where(and(eq(account.isHidden, false), ids ? inArray(account.id, ids) : undefined))
-      .groupBy(s.date)
       .orderBy(asc(s.date))
       .all();
+    // Imports rebuild only the affected account. Carry forward other accounts' last known values.
+    const rows: {
+      date: string;
+      valueCents: number;
+      investedCents: number;
+      cashCents: number;
+      externalFlowCents: number;
+    }[] = [];
+    const prior = new Map<string, (typeof snapshots)[number]>();
+    let value = 0n;
+    let invested = 0n;
+    let cash = 0n;
+    let flow = 0n;
+    for (const [index, point] of snapshots.entries()) {
+      const previous = prior.get(point.id);
+      const delta = BigInt(point.valueCents) - BigInt(previous?.valueCents ?? 0);
+      value += delta;
+      invested += BigInt(point.investedCents) - BigInt(previous?.investedCents ?? 0);
+      if (point.type !== 'depot') cash += delta;
+      flow += BigInt(point.externalFlowCents);
+      prior.set(point.id, point);
+      if (snapshots[index + 1]?.date !== point.date) {
+        rows.push({
+          date: point.date,
+          valueCents: Number(value),
+          investedCents: Number(invested),
+          cashCents: Number(cash),
+          externalFlowCents: Number(flow),
+        });
+        flow = 0n;
+      }
+    }
     const latest = rows.at(-1)?.date ?? new Date().toISOString().slice(0, 10);
     try {
       const range = resolvePeriod(query, latest, rows[0]?.date ?? latest);

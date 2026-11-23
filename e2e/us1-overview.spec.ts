@@ -1,9 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './owner-test.js';
 
 test('shows exact demo net worth, filters accounts, and persists the customized layout', async ({ page }) => {
   await page.goto('/');
-  await page.getByLabel('Passwort').fill('playwright-demo-password');
-  await page.getByRole('button', { name: 'Anmelden' }).click();
   const chart = page.locator('[data-widget="networth"]');
   await expect(chart).toContainText(/65\.072,00\s€/u);
   await expect(chart.locator('svg').first()).toBeVisible();
