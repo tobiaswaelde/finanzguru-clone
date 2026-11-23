@@ -54,7 +54,7 @@ See `deploy/README.md`. Validate the Compose configuration with example settings
 | V4 | US2 | Upload `unknown-layout.csv` | Column mapper appears; mapping saved; re-upload auto-detects it |
 | V5 | US1 | `pnpm --filter api db:seed --demo`, open `/` | All 8 widgets filled; Gesamtvermögen = Σ depot values + Σ cash (to the cent) |
 | V6 | US1 | Switch 1W…All-time, Vermögen/Rendite, account filter | Chart, totals, KPIs update; no `NaN` |
-| V7 | US1 | Compare KPIs with `apps/api/test/fixtures/returns-reference.xlsx` | TWROR/IRR within 0.01 pp (SC-007) |
+| V7 | US1 | Compare KPIs with the spreadsheet formulas and synthetic inputs in `apps/api/test/fixtures/returns-reference.md` and `returns-reference.json` | TWROR/IRR within 0.01 pp (SC-007) |
 | V8 | US4 | `/investments` → filter ETF, hide a column, Export | Table/totals update; CSV contains the visible columns only |
 | V9 | US5 | `/budget` → Monat/Quartal/Jahr, step back | Figures and 12 bars update; Sankey totals = income |
 | V10 | US5 | Categorize an unreviewed row with "Regel speichern" | Count drops by ≥ 1; matching rows are auto-categorized on the next import |

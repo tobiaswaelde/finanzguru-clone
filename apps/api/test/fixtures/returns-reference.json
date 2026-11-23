@@ -1,0 +1,14 @@
+{
+  "flows": [
+    { "date": "2023-01-01", "amountCents": -100000 },
+    { "date": "2024-01-01", "amountCents": -50000 },
+    { "date": "2024-12-31", "amountCents": 176000 }
+  ],
+  "irr": 0.1,
+  "values": [
+    { "valueCents": 100000, "externalFlowCents": 0 },
+    { "valueCents": 160000, "externalFlowCents": 50000 },
+    { "valueCents": 176000, "externalFlowCents": 0 }
+  ],
+  "twror": 0.21
+}
