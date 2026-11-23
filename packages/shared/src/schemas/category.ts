@@ -13,3 +13,5 @@ export const categorySchema = categoryInputSchema.required().extend({
   id: idSchema,
   isDefault: z.boolean(),
 });
+
+export const categoryTreeSchema = z.array(categorySchema.extend({ children: z.array(categorySchema) }));

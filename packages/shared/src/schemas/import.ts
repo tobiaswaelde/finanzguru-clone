@@ -69,26 +69,27 @@ export const importJobSchema = z.object({
   finishedAt: timestampSchema.nullable(),
 });
 
-export const ruleInputSchema = z
-  .object({
-    priority: z.int().nonnegative(),
-    matchField: z.enum(['counterparty', 'purpose', 'counterparty_iban']),
-    operator: z.enum(['contains', 'equals', 'starts_with', 'regex']),
-    pattern: z.string().min(1).max(256),
-    amountSign: z.enum(['positive', 'negative']).nullable().optional(),
-    categoryId: idSchema,
-    enabled: z.boolean().optional(),
-  })
-  .refine(
-    /** Reject invalid syntax when the rule uses a regular expression. */
-    (rule) => {
-      if (rule.operator !== 'regex') return true;
-      try {
-        new RegExp(rule.pattern, 'iu');
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    { path: ['pattern'], message: 'Invalid regular expression' },
-  );
+export const ruleShapeSchema = z.object({
+  priority: z.int().nonnegative(),
+  matchField: z.enum(['counterparty', 'purpose', 'counterparty_iban']),
+  operator: z.enum(['contains', 'equals', 'starts_with', 'regex']),
+  pattern: z.string().min(1).max(256),
+  amountSign: z.enum(['positive', 'negative']).nullable().optional(),
+  categoryId: idSchema,
+  enabled: z.boolean().optional(),
+});
+export const rulePatchSchema = ruleShapeSchema.partial();
+export const ruleSchema = ruleShapeSchema.required().extend({ id: idSchema });
+export const ruleInputSchema = ruleShapeSchema.refine(
+  /** Reject invalid syntax when the rule uses a regular expression. */
+  (rule) => {
+    if (rule.operator !== 'regex') return true;
+    try {
+      new RegExp(rule.pattern, 'iu');
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  { path: ['pattern'], message: 'Invalid regular expression' },
+);
