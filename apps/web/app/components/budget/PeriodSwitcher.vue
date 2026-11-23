@@ -4,6 +4,7 @@
       v-for="item in widths"
       :key="item"
       size="sm"
+      :disabled="!ready"
       :aria-pressed="granularity === item"
       @click="granularity = item"
       >{{ $t(`budget.granularity.${item}`) }}</UButton
@@ -19,6 +20,10 @@
 const widths = ['month', 'quarter', 'year'] as const;
 const granularity = defineModel<(typeof widths)[number]>('granularity', { required: true });
 const anchor = defineModel<string>('anchor', { required: true });
+const ready = ref(false);
+onMounted(() => {
+  ready.value = true;
+});
 defineProps<{ label: string }>();
 
 /** Return the current UTC day, matching the budget API. */

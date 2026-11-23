@@ -4,7 +4,7 @@
     <h1 class="text-2xl font-semibold">{{ $t('dashboard.budgets') }}</h1>
     <form class="flex flex-wrap items-end gap-3" @submit.prevent="save">
       <UFormField :label="$t('budget.chooseCategory')">
-        <USelect v-model="selected" :items="options" />
+        <USelect v-model="selected" :items="options" :disabled="!ready" />
       </UFormField>
       <UFormField :label="$t('budget.limit')">
         <UInput v-model="amount" inputmode="decimal" required />
@@ -55,6 +55,10 @@ const amount = ref('');
 const editing = ref('');
 const failed = ref(false);
 const busy = ref(false);
+const ready = ref(false);
+onMounted(() => {
+  ready.value = true;
+});
 
 /** Populate the form from one existing budget limit. */
 function edit(row: Budget): void {

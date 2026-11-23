@@ -18,7 +18,7 @@
           v-if="row.counterparty || row.purpose"
           v-model="saveRule[row.id]"
           :label="$t('budget.saveRule')"
-          :disabled="pending.has(row.id)"
+          :disabled="pending.has(row.id) || !ready"
         />
         <USelect
           :items="options"
