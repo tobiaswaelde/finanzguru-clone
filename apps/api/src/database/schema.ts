@@ -310,3 +310,17 @@ export const sourceAccount = sqliteTable(
   },
   (t) => [primaryKey({ columns: [t.sourceId, t.externalRef] })],
 );
+
+export const budget = sqliteTable(
+  'budget',
+  {
+    id: id(),
+    categoryId: text('category_id')
+      .notNull()
+      .unique()
+      .references(() => category.id, { onDelete: 'cascade' }),
+    monthlyLimitCents: integer('monthly_limit_cents').notNull(),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [check('budget_limit_positive', sql`${t.monthlyLimitCents} > 0`)],
+);

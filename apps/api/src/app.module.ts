@@ -3,6 +3,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { DrizzleModule } from './database/drizzle.module.js';
 import { AccountsModule } from './modules/accounts/accounts.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { BudgetsModule } from './modules/budgets/budgets.module.js';
 import { CashflowModule } from './modules/cashflow/cashflow.module.js';
 import { CategoriesModule } from './modules/categories/categories.module.js';
 import { HealthModule } from './modules/health/health.module.js';
@@ -28,6 +29,7 @@ import { OverviewModule } from './modules/overview/overview.module.js';
     InvestmentsModule,
     CashflowModule,
     CategoriesModule,
+    BudgetsModule,
   ],
 })
 export class AppModule {}
