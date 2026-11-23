@@ -208,6 +208,13 @@ As the owner, I will later fetch Sparkasse account balance and transactions dire
 - **FR-061**: Connection secrets (e.g. MCP access grants) MUST be stored encrypted at rest and never sent to the browser.
 - **FR-062**: All financial data MUST stay on the owner's own host; no third-party analytics or telemetry.
 
+**Operations**
+
+- **FR-070**: The app MUST be runnable locally as containers identical to the server deployment, so it can be tested before a rollout.
+- **FR-071**: Each released version MUST be published as container images by the code repository's build pipeline; the server deployment MUST only reference these published images.
+- **FR-072**: The server deployment MUST keep all persistent data in a host directory of the deployment folder, survive container re-creation without data loss, and expose the UI only at `192.168.178.36` in the home network.
+- **FR-073**: The database MUST be backed up daily with a consistent online copy, keeping 7 days.
+
 ### Key Entities
 
 - **Institution**: A bank or broker (Scalable Capital, Sparkasse, manual).
@@ -237,10 +244,12 @@ As the owner, I will later fetch Sparkasse account balance and transactions dire
 - **SC-005**: The owner can categorize an uncategorized transaction in at most 2 clicks, and saved rules categorize at least 80% of recurring transactions automatically after one month of data.
 - **SC-006**: All four tabs are usable without horizontal scrolling at 360 px width.
 - **SC-007**: TWROR and IRR values match a reference spreadsheet calculation within 0.01 percentage points for the test dataset.
+- **SC-008**: A new version reaches the server by pulling published images only; recreating the containers keeps 100% of stored data.
 
 ## Assumptions
 
-- Single owner, self-hosted (local machine or private server); no multi-user or sharing features ("Teilen" is out of scope for v1).
+- Single owner, self-hosted; no multi-user or sharing features ("Teilen" is out of scope for v1).
+- The app is developed and tested on the owner's local machine first. It then runs as containers on the owner's home server, reachable in the home network at the fixed address `192.168.178.36`. The server holds only runtime artifacts (container definition, configuration, data), never source code; versions are published by the code repository's build pipeline and pulled by the server.
 - No paid tiers, upsell banners or advertising from the reference tool are reproduced.
 - Scalable Capital offers an official remote MCP server (`https://mcp.scalable.capital/mcp`) with read access to depot data; the owner authenticates there themselves.
 - Market prices come from the Scalable data source for held instruments; instruments only known from CSV keep the prices contained in the CSV until another price source is added.

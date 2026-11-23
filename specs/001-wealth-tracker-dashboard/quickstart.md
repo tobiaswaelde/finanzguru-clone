@@ -29,6 +29,20 @@ pnpm test:e2e      # Playwright: desktop + 360 px
 
 All four must pass before each task commit.
 
+## Local container test (before every deploy)
+
+```powershell
+docker compose -f compose.local.yaml up -d --build   # http://localhost:3000
+docker compose -f compose.local.yaml exec finance-api node dist/scripts/set-password.js
+docker compose -f compose.local.yaml down
+```
+
+Run V1, V5, V12 and V19 against the containers. Deploy only after this passes.
+
+## Server rollout (each server command only after Max's OK)
+
+See `deploy/README.md`: copy `deploy/compose.yaml` and `deploy/.env.example` to `/root/docker/finance-clone/`, fill `.env` on the server, `docker compose pull`, `docker compose up -d`, set the owner password, open `http://192.168.178.36:3000`.
+
 ## Validation scenarios
 
 | # | Story | Steps | Expected |
@@ -51,5 +65,9 @@ All four must pass before each task commit.
 | V16 | All | Playwright at 360 px and in dark/light | No horizontal scroll on any tab (SC-006) |
 | V17 | Perf | Seed 5 y daily history + 10k tx, load `/` | Fully rendered < 2 s (SC-002) |
 | V18 | API | Open `http://localhost:3001/api/docs`; call `GET /api/overview/kpis` without a cookie | Swagger lists all endpoints from [http-api.md](./contracts/http-api.md); request returns 401 |
+| V19 | Docker local | `compose.local.yaml` up, import a CSV, `down`, `up` again | Data still present (bind mount `./data-local/api`); both healthchecks `healthy` |
+| V20 | Release | Push to `main` | `release.yml` publishes `finanzguru-clone-web` and `-api` with `latest` + `sha-*` tags to GHCR |
+| V21 | Server | On `rocky`: `docker compose -f /root/docker/finance-clone/compose.yaml config` | Valid; order `name`, `networks`, `services`; only bind mounts; `.36` + fixed MAC on `FRITZBOX` |
+| V22 | Server | After `pull` + `up -d`: open `http://192.168.178.36:3000` from the LAN; recreate containers | Login works; data unchanged after recreation (SC-008) |
 
 Contracts: [http-api.md](./contracts/http-api.md), [data-source.md](./contracts/data-source.md), [csv-formats.md](./contracts/csv-formats.md). Entities: [data-model.md](./data-model.md).

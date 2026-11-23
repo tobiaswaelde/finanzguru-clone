@@ -7,6 +7,12 @@ Served by `apps/api` (NestJS, Fastify adapter, global prefix `api`, port 3001). 
 - Validation via `nestjs-zod` `ZodValidationPipe`. Errors: `{ statusCode, statusMessage, data?: { issues } }` (400/401/404/409/422/502).
 - Common query params: `accounts` (comma-separated account ids; omitted = all visible), `period` (`1W|1M|YTD|1Y|3Y|5Y|ALL`), `from`/`to` (dates; override `period`).
 
+## Health
+
+| Method | Path | Body / Query | Response |
+|--------|------|--------------|----------|
+| GET | `/api/health` | – (`@Public()`) | `{ status: 'ok', db: 'ok' }` (200) or 503; used by the Docker healthchecks |
+
 ## Auth
 
 | Method | Path | Body / Query | Response |
