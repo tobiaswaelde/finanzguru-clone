@@ -1,5 +1,17 @@
 {
   "overview": {
     "title": "Übersicht"
+  },
+  "shell": {
+    "brand": "Vermögensblick",
+    "search": "Suche",
+    "add": "Hinzufügen",
+    "profile": "Profil",
+    "navigation": "Hauptnavigation",
+    "accountFilter": "Kontofilter",
+    "allAccounts": "Alle Konten",
+    "investments": "Investments",
+    "budget": "Budget",
+    "insurance": "Versicherung"
   }
 }
