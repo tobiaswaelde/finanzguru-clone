@@ -22,6 +22,8 @@ class ManagedDatabase implements OnApplicationShutdown {
 
 /** Typed Drizzle client injected using the DB token. */
 export type FinanceDatabase = ManagedDatabase['db'];
+/** Active SQLite transaction with the same schema as the injected client. */
+export type FinanceTransaction = Parameters<Parameters<FinanceDatabase['transaction']>[0]>[0];
 
 /** Makes the SQLite-backed Drizzle client available to API modules. */
 @Global()
