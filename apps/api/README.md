@@ -11,3 +11,12 @@ Verified on Node 26 with `better-sqlite3` 13.2.0: a disposable file database pas
 The API skips checking third-party declarations because Drizzle exports types for optional database drivers that this application does not install. Project source remains strictly type-checked.
 
 Run `pnpm --filter api build` and then `pnpm --filter api db:migrate` against a new database before using it. Back up an existing database before applying new migrations. The initial migration only adds tables and indexes; recovery from a failed upgrade uses a verified backup, not a destructive schema reset.
+
+Set the owner password after migration. The CLI reads one password of 12–1024 characters from standard input. Pass it from a trusted password manager or an interactive no-echo prompt (Bash example):
+
+```bash
+read -rs -p 'Owner password: ' owner_password
+printf '\n'
+printf '%s\n' "$owner_password" | pnpm --filter api owner:set-password
+unset owner_password
+```

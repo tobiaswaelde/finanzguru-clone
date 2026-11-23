@@ -15,7 +15,7 @@ Copy-Item apps/web/.env.example apps/web/.env   # API_BASE_URL=http://localhost:
 pnpm --filter api build
 pnpm --filter api db:migrate
 pnpm --filter api db:seed                       # default categories (+ demo dataset with --demo)
-pnpm --filter api owner:set-password
+# Set the owner password via stdin from a no-echo prompt; see apps/api/README.md.
 pnpm dev                                        # api :3001 + web :3000 in parallel → http://localhost:3000
 ```
 
@@ -34,7 +34,7 @@ Run applicable gates before each task commit. During bootstrap, record unavailab
 
 ```powershell
 docker compose -f compose.local.yaml up -d --build   # http://localhost:3000
-docker compose -f compose.local.yaml exec finance-api node dist/scripts/set-password.js
+# Run the owner-password CLI with `exec -T` and a password supplied on stdin.
 docker compose -f compose.local.yaml down
 ```
 

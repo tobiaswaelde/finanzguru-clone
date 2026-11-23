@@ -9,7 +9,7 @@ import { DB, type FinanceDatabase } from '../../src/database/drizzle.module.js';
 it('reports database readiness and documents the wire response', async () => {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { logger: false });
   try {
-    configureApp(app, true);
+    await configureApp(app, { docs: true, sessionSecret: 'synthetic-health-test-only', secure: false });
     await app.init();
     const response = await app.inject({ url: '/api/health' });
     expect(response.statusCode).toBe(200);

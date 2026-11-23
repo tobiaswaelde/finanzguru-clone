@@ -10,7 +10,11 @@ async function bootstrap(): Promise<void> {
   loadLocalEnv();
   const env = parseApiEnv(process.env);
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { bufferLogs: true });
-  configureApp(app, process.env.NODE_ENV !== 'production');
+  await configureApp(app, {
+    docs: process.env.NODE_ENV !== 'production',
+    sessionSecret: env.API_SESSION_SECRET,
+    secure: env.COOKIE_SECURE,
+  });
   app.enableShutdownHooks();
   await app.listen(env.PORT, '0.0.0.0');
 }

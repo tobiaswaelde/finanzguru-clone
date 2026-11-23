@@ -3,8 +3,8 @@
 Served by `apps/api` (NestJS, Fastify adapter, global prefix `api`, port 3001). The browser reaches it only through the Nuxt proxy at `http://localhost:3000/api/**`. Request/response schemas live in `packages/shared` (zod) and are published as OpenAPI at `/api/docs` (dev only). Session: `@fastify/secure-session` cookie, global `SessionGuard`.
 
 - JSON only; money as integer cents (`*_cents`), decimals as strings, dates `YYYY-MM-DD`.
-- All routes except `POST /api/auth/login` (`@Public()`) require the owner session (401 otherwise).
-- Validation via `nestjs-zod` `ZodValidationPipe`. Errors: `{ statusCode, statusMessage, data?: { issues } }` (400/401/404/409/422/502).
+- Application routes require the owner session (401 otherwise), except the public login and health probe. Development-only Swagger is not served in production.
+- Validation via `nestjs-zod` `ZodValidationPipe`. Errors: `{ statusCode, statusMessage, data?: { issues } }` (400/401/404/409/422/429/502/503).
 - Common query params: `accounts` (comma-separated account ids; omitted = all visible), `period` (`1W|1M|YTD|1Y|3Y|5Y|ALL`), `from`/`to` (dates; override `period`).
 
 ## Health
@@ -17,7 +17,7 @@ Served by `apps/api` (NestJS, Fastify adapter, global prefix `api`, port 3001). 
 
 | Method | Path | Body / Query | Response |
 |--------|------|--------------|----------|
-| POST | `/api/auth/login` | `{ password }` | 204 + session cookie; 401 |
+| POST | `/api/auth/login` | `{ password }` | 204 + session cookie; 401 if incorrect; 429 after five attempts per minute |
 | POST | `/api/auth/logout` | – | 204 |
 | GET | `/api/auth/session` | – | `{ displayName }` |
 
