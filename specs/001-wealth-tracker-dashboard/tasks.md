@@ -193,7 +193,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 
 **Purpose**: Quality across all stories, then local container testing and a portable deployment kit. Live rollout is out of scope.
 
-- [ ] T074 [P] Responsive and theme pass over all pages at 360 px, tablet and desktop in dark/light; `e2e/responsive.spec.ts` asserts no horizontal scroll on every tab (SC-006)
+- [x] T074 [P] Responsive and theme pass over all pages at 360 px, tablet and desktop in dark/light; `e2e/responsive.spec.ts` asserts no horizontal scroll on every tab (SC-006)
 - [ ] T075 [P] Performance: generator `apps/api/src/database/perf-seed.ts` for 5 years daily history + 10k transactions; add missing indexes; measure `/` < 2 s (SC-002) and 50k-row CSV import < 30 s; record results in `specs/001-wealth-tracker-dashboard/quickstart.md`
 - [ ] T076 [P] Security hardening: `@fastify/helmet` in `apps/api/src/main.ts`, CSP headers in `apps/web/nuxt.config.ts`, check credentials never appear in responses or logs, upload limits, `pnpm audit` without high/critical findings
 - [ ] T077 [P] Write `README.md` (setup, scripts, architecture, data sources, privacy note) and `apps/api/README.md` / `apps/web/README.md`
