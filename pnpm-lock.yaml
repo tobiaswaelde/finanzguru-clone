@@ -56,6 +56,9 @@ importers:
       better-sqlite3:
         specifier: ^13.2.0
         version: 13.2.0
+      csv-parse:
+        specifier: ^7.0.3
+        version: 7.0.3
       decimal.js:
         specifier: ^10.6.0
         version: 10.6.0
@@ -4124,6 +4127,9 @@ packages:
 
   csstype@3.2.4:
     resolution: {integrity: sha512-PoKaoPzQapnEoqUSnHx1u6W6ku8CVEgKsnpmmzU3m1nwkidpPBQ8V/Zq2+bWNrsOKoKLwTGdbx6xF7BXP1zLVQ==}
+
+  csv-parse@7.0.3:
+    resolution: {integrity: sha512-YFd3QM/yo17vH91L1IOZuvl09zM0zEEtdfTcOCKWcMdM++MNaQSyp09slXyFCLaPXvHstQFx/xC8myiFHSMUvw==}
 
   d3-array@2.12.1:
     resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
@@ -11868,6 +11874,8 @@ snapshots:
       postcss-calc: 11.3.0(postcss@8.5.33)
 
   csstype@3.2.4: {}
+
+  csv-parse@7.0.3: {}
 
   d3-array@2.12.1:
     dependencies:
