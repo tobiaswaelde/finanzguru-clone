@@ -9,7 +9,31 @@
     "cash": "Liquidität",
     "seriesMode": "Diagrammansicht",
     "value": "Vermögen",
-    "return": "Rendite"
+    "return": "Rendite",
+    "allocation": "Aufteilung",
+    "unit": "Einheit",
+    "kpis": "Kennzahlen",
+    "metrics": {
+      "invested": "Investiertes Kapital",
+      "priceGain": "Kursgewinn",
+      "realizedGross": "Realisierte Gewinne (brutto)",
+      "realizedNet": "Realisierte Gewinne (netto)",
+      "other": "Sonstige Gewinne",
+      "dividendsGross": "Dividenden (brutto)",
+      "dividendsNet": "Dividenden (netto)",
+      "interestGross": "Zinsen (brutto)",
+      "interestNet": "Zinsen (netto)",
+      "taxesFees": "Steuern und Gebühren",
+      "total": "Gesamtertrag",
+      "twror": "TWROR",
+      "irr": "Interner Zinsfuß",
+      "inflation": "Inflation",
+      "realReturn": "Realrendite"
+    },
+    "explanations": {
+      "twror": "Zeitgewichtete Rendite ohne Einfluss externer Zahlungsflüsse.",
+      "irr": "Annualisierte Rendite einschließlich Zeitpunkten der Zahlungen."
+    }
   },
   "common": {
     "notAvailable": "Hier sind noch keine Daten verfügbar.",
