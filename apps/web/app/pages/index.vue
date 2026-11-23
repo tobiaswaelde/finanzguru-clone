@@ -7,10 +7,11 @@
         <template #body>
           <ol class="space-y-2">
             <li v-for="(item, index) in draft" :key="item.widgetKey" class="flex flex-wrap items-center gap-2">
-              <label class="flex min-w-0 flex-1 items-center gap-2 text-sm">
-                <UCheckbox v-model="item.visible" />
-                {{ $t(`dashboard.widgets.${item.widgetKey}`) }}
-              </label>
+              <UCheckbox
+                v-model="item.visible"
+                class="min-w-0 flex-1"
+                :label="$t(`dashboard.widgets.${item.widgetKey}`)"
+              />
               <UButton
                 type="button"
                 size="xs"

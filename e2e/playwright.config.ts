@@ -15,6 +15,7 @@ export default defineConfig({
   globalTeardown: './teardown.ts',
   metadata: { workDir } satisfies FullConfig['metadata'],
   retries: process.env.CI ? 1 : 0,
+  workers: 1,
   use: { baseURL: webUrl, trace: 'retain-on-failure' },
   projects: [
     { name: 'desktop', use: { viewport: { width: 1280, height: 800 } } },
@@ -23,7 +24,7 @@ export default defineConfig({
   webServer: [
     {
       command:
-        'pnpm --filter api... build && pnpm --filter api db:migrate && node e2e/fixture-password.mjs | pnpm --filter api owner:set-password && pnpm --filter api start',
+        'pnpm --filter api... build && pnpm --filter api db:migrate && pnpm --filter api db:seed --demo && node e2e/fixture-password.mjs | pnpm --filter api owner:set-password && pnpm --filter api start',
       cwd: '..',
       port: Number(apiPort),
       env: {
