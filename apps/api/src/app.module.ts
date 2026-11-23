@@ -1,6 +1,19 @@
 import { Module } from '@nestjs/common';
-import { BootstrapHealthController } from './bootstrap-health.controller.js';
+import { LoggerModule } from 'nestjs-pino';
 import { DrizzleModule } from './database/drizzle.module.js';
+import { HealthModule } from './modules/health/health.module.js';
 
-@Module({ imports: [DrizzleModule], controllers: [BootstrapHealthController] })
+/** Registers infrastructure and the HTTP feature modules. */
+@Module({
+  imports: [
+    LoggerModule.forRoot({
+      pinoHttp: {
+        autoLogging: false,
+        redact: ['req.headers.cookie', 'req.headers.authorization', 'res.headers["set-cookie"]'],
+      },
+    }),
+    DrizzleModule,
+    HealthModule,
+  ],
+})
 export class AppModule {}
