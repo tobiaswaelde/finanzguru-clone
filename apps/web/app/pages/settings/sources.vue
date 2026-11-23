@@ -2,10 +2,7 @@
   <UContainer as="main" class="space-y-5 pb-8">
     <h1 class="text-2xl font-semibold">{{ $t('import.sources') }}</h1>
     <p v-if="sourceError || accountError" role="alert" class="text-error">{{ $t('auth.unavailable') }}</p>
-    <UCard v-for="source in sources" :key="source.id">
-      <h2 class="font-semibold">{{ source.displayName }}</h2>
-      <UBadge color="neutral">{{ $t(`import.sourceStatus.${source.status}`) }}</UBadge>
-    </UCard>
+    <SourceCard v-for="source in sources" :key="source.id" :source="source" />
     <UCard>
       <template #header
         ><h2 class="font-semibold">{{ $t('import.title') }}</h2></template
@@ -18,6 +15,7 @@
 <script setup lang="ts">
 import type { sourceSchema } from '@finance/shared';
 import CsvUpload from '~/components/import/CsvUpload.vue';
+import SourceCard from '~/components/import/SourceCard.vue';
 
 const { get, accounts: loadAccounts } = useApi();
 const { data: sources, error: sourceError } = useAsyncData('data-sources', () =>

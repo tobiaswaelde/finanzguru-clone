@@ -185,7 +185,7 @@ description: "Task list for Personal Wealth Tracker Dashboard"
 
 **Independent Test**: Datenquellen shows "Sparkasse (Live-Abfrage) – geplant", not activatable (quickstart V15).
 
-- [ ] T073 [US7] Implement the placeholder `apps/api/src/modules/sources/sparkasse-fints/sparkasse-fints.source.ts` (`status()` → `planned`, `fetch` throws `NotImplementedError`), register it in `SourcesRegistry`, and show a disabled "geplant" card in `apps/web/app/pages/settings/sources.vue`; unit + component tests
+- [x] T073 [US7] Implement the placeholder `apps/api/src/modules/sources/sparkasse-fints/sparkasse-fints.source.ts` (`status()` → `planned`, `fetch` throws `NotImplementedError`), register it in `SourcesRegistry`, and show a disabled "geplant" card in `apps/web/app/pages/settings/sources.vue`; unit + component tests
 
 ---
 

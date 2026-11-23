@@ -84,6 +84,7 @@
   },
   "import": {
     "sources": "Datenquellen",
+    "sparkassePlanned": "Die Live-Abfrage kann noch nicht aktiviert werden. CSV-Import ist verfügbar.",
     "title": "CSV importieren",
     "account": "Zielkonto",
     "chooseFile": "CSV-Datei auswählen",
