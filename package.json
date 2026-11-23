@@ -11,7 +11,7 @@
     "lint": "pnpm --filter web exec nuxt prepare && eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "pnpm -r run typecheck",
+    "typecheck": "pnpm --filter @finance/shared build && pnpm -r run typecheck",
     "test": "pnpm -r run test",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
     "docker:local": "docker compose -f compose.local.yaml up --build"
