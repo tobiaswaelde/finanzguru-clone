@@ -26,3 +26,5 @@ export const transactionSchema = transactionInputSchema.required().extend({
   source: z.enum(transactionSources),
   sourceRef: z.string().nullable(),
 });
+
+export const manualTransactionSchema = transactionInputSchema;

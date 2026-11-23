@@ -20,6 +20,9 @@ export const accountSchema = accountInputSchema.required().extend({
   lastSyncedAt: timestampSchema.nullable(),
 });
 
+export const manualAccountSchema = accountInputSchema.partial({ institutionId: true });
+export const patchAccountSchema = manualAccountSchema.partial();
+
 export const accountsListSchema = z.array(accountSchema);
 const accountTreeItemSchema = z.object({
   id: idSchema,
